@@ -1,4 +1,3 @@
-import React from 'react';
 import HeroSection from '../widgets/components/landing/HeroSection';
 import FeaturesSection from '../widgets/components/landing/FeaturesSection';
 import StatsSection from '../widgets/components/landing/StatsSection';
