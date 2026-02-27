@@ -23,7 +23,7 @@ export const authApi = baseApi.injectEndpoints({
 
         refresh: builder.mutation<Envelope<LoginResponse>, void>({
             query: () => ({
-                url: USER_SERVICE_API_URL + "refresh",
+                url: USER_SERVICE_API_URL + "refresh-token",
                 method: "POST"
             })
         }),

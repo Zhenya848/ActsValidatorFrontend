@@ -1,24 +1,35 @@
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, Outlet } from 'react-router-dom';
 import { createPageUrl } from "./shared/utils"
 import { motion, AnimatePresence } from 'framer-motion';
-import { FileSpreadsheet, Upload, Clock, Home, Menu, X, LogIn } from 'lucide-react';
+import { FileSpreadsheet, Upload, Clock, Zap, Home, Menu, X, LogIn, Loader2 } from 'lucide-react';
 import { Button } from './shared/ui/button';
 import { Bounce, ToastContainer } from "react-toastify";
+import { useSelector } from 'react-redux';
+import { selectUser } from './app/auth.slice';
+import { UserDropdown } from './widgets/components/layout/UserDropdown';
+import { useSetUser } from './features/accounts/hooks/useSetUser';
 
 const navItems = [
   { name: 'Главная', page: '', icon: Home },
   { name: 'Загрузка', page: 'upload', icon: Upload },
   { name: 'История', page: 'history', icon: Clock },
+  { name: 'Цены', page: 'pricing', icon: Zap }
 ];
 
-interface IRootLayoutParameters{
+interface IRootLayoutParameters {
   currentPageName: string
 }
 
 export default function RootLayout({ currentPageName = "" }: IRootLayoutParameters) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const isLanding = currentPageName === 'home';
+  const user = useSelector(selectUser);
+  const { setUser, isLoading } = useSetUser();
+
+  useEffect(() => {
+    setUser();
+  }, [])
 
   return (
     <div className="min-h-screen bg-white">
@@ -51,18 +62,39 @@ export default function RootLayout({ currentPageName = "" }: IRootLayoutParamete
             </div>
 
             <div className="hidden md:flex items-center gap-3">
-              <Link to={createPageUrl("login")}>
-                <Button variant="ghost" className="text-sm text-slate-500 hover:text-slate-700 rounded-lg">
-                  <LogIn className="w-4 h-4 mr-2" />
-                  Войти
-                </Button>
-              </Link>
+              {
+                isLoading
+                ? 
+                (
+                  <div className="flex items-center gap-2 px-3 py-1.5 text-slate-400">
+                    <Loader2 className="w-5 h-5 animate-spin text-indigo-500" />
+                    <span className="text-sm font-medium">Загрузка профиля...</span>
+                  </div>
+                )
+                :
+                user
+                ? 
+                (
+                  <UserDropdown user={user} />
+                ) 
+                : 
+                (
+                  <>
+                    <Link to={createPageUrl("login")}>
+                      <Button variant="ghost" className="text-sm text-slate-500 hover:text-slate-700 rounded-lg">
+                        <LogIn className="w-4 h-4 mr-2" />
+                        Войти
+                      </Button>
+                    </Link>
 
-              <Link to={createPageUrl("register")}>
-                <Button className="bg-indigo-600 hover:bg-indigo-700 rounded-lg text-sm shadow-md shadow-indigo-200">
-                  Регистрация
-                </Button>
-              </Link>
+                    <Link to={createPageUrl("register")}>
+                      <Button className="bg-indigo-600 hover:bg-indigo-700 rounded-lg text-sm shadow-md shadow-indigo-200">
+                        Регистрация
+                      </Button>
+                    </Link>
+                  </>
+                )
+              }
             </div>
 
             <button

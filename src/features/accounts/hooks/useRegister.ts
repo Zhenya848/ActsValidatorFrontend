@@ -18,15 +18,15 @@ export const useRegistration = () => {
 
   const handleRegister = async (registerRequest: IRegistrerParameters) => {
     try {
-        await register({ userName: registerRequest.userName, email: registerRequest.email, password: registerRequest.password}).unwrap();
+      await register({ userName: registerRequest.userName, email: registerRequest.email, password: registerRequest.password}).unwrap();
 
-        const loginResponse = await login({ email: registerRequest.email, password: registerRequest.password }).unwrap();
-        dispatch(setCredentials({ accessToken: loginResponse.result!.accessToken, user: loginResponse.result!.user }));
-        
-        navigate("/");
+      const loginResponse = await login({ email: registerRequest.email, password: registerRequest.password }).unwrap();
+      dispatch(setCredentials({ accessToken: loginResponse.result!.accessToken, user: loginResponse.result!.user }));
+      
+      navigate("/");
     } 
     catch (e: unknown) {
-        showError(e);
+      showError(e);
     }
   };
 
