@@ -6,6 +6,8 @@ import History from "../pages/History";
 import CollationDetails from "../pages/CollationDetails";
 import Register from "../pages/Register";
 import Login from "../pages/Login";
+import Pricing from "../pages/Pricing";
+import Settings from "../pages/Settings";
 
 export const router = createBrowserRouter([
     {
@@ -36,6 +38,14 @@ export const router = createBrowserRouter([
         {
           path: "/login",
           element: <Login />
+        },
+        {
+          path: "/pricing",
+          element: <Pricing />
+        },
+        {
+          path: "/settings",
+          element: <Settings />
         }
       ],
       errorElement: <div>404 Страница не найдена!</div>
