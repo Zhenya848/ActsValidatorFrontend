@@ -1,11 +1,14 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '../../../shared/utils';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../../shared/ui/table';
 import { Badge } from '../../../shared/ui/badge';
 import { Button } from '../../../shared/ui/button';
 import { FileSpreadsheet, Eye, ChevronRight, AlertTriangle, CheckCircle2, Clock, type LucideProps } from 'lucide-react';
+import { useGetQuery } from '../../../features/collations/api';
+import { useSelector } from 'react-redux';
+import { selectUser } from '../../../app/auth.slice';
 
 const mockData = [
   { id: '1', fileName: 'Акт_сверки_Q4_2025.xlsx', uploadDate: '07 фев 2026, 14:32', rows: 1240, discrepancies: 0, status: 'success', counterparty: 'ООО "Ромашка"' },
@@ -29,6 +32,26 @@ const statusConfig: Record<string, statusConfigType> = {
 };
 
 export default function HistoryTable() {
+  const user = useSelector(selectUser);
+  const navigate = useNavigate();
+
+  const [queryParams, setQueryParams] = useState({
+    page: 1,
+    pageSize: 10,
+    actName: "",
+    orderBy: "",
+    orderByDesc: false
+  });
+
+  const { data: actsData, isLoading, error } = useGetQuery(queryParams, {skip: !user});
+
+  useEffect(() => {
+      if (!user) {
+        navigate("/login")
+        return;
+      }
+  }, []);
+
   return (
     <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
       <div className="overflow-x-auto">
@@ -37,16 +60,15 @@ export default function HistoryTable() {
             <TableRow className="bg-slate-50/80 border-b border-slate-200">
               <TableHead className="text-xs font-semibold text-slate-500 uppercase tracking-wider py-4 pl-6">Документ</TableHead>
               <TableHead className="text-xs font-semibold text-slate-500 uppercase tracking-wider py-4">Контрагент</TableHead>
-              <TableHead className="text-xs font-semibold text-slate-500 uppercase tracking-wider py-4">Дата загрузки</TableHead>
               <TableHead className="text-xs font-semibold text-slate-500 uppercase tracking-wider py-4 text-center">Строк</TableHead>
-              <TableHead className="text-xs font-semibold text-slate-500 uppercase tracking-wider py-4">Статус</TableHead>
               <TableHead className="text-xs font-semibold text-slate-500 uppercase tracking-wider py-4 text-center">Расхождения</TableHead>
-              <TableHead className="text-xs font-semibold text-slate-500 uppercase tracking-wider py-4 pr-6"></TableHead>
+              <TableHead className="text-xs font-semibold text-slate-500 uppercase tracking-wider py-4">Статус</TableHead>
+              <TableHead className="text-xs font-semibold text-slate-500 uppercase tracking-wider py-4">Дата загрузки</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {mockData.map((row, i) => {
-              const st = statusConfig[row.status];
+            {actsData?.result?.items.map((row, i) => {
+              const st = statusConfig.success;
               const StatusIcon = st.icon;
               return (
                 <motion.tr key={row.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.05 }}
@@ -56,27 +78,28 @@ export default function HistoryTable() {
                       <div className="w-9 h-9 rounded-lg bg-indigo-50 flex items-center justify-center flex-shrink-0">
                         <FileSpreadsheet className="w-4 h-4 text-indigo-500" />
                       </div>
-                      <span className="text-sm font-medium text-slate-800 truncate max-w-[200px]">{row.fileName}</span>
+                      <span className="text-sm font-medium text-slate-800 truncate max-w-[200px]">{row.act1Name}</span>
                     </div>
                   </TableCell>
-                  <TableCell className="py-4"><span className="text-sm text-slate-600">{row.counterparty}</span></TableCell>
-                  <TableCell className="py-4">
-                    <div className="flex items-center gap-2 text-sm text-slate-400">
-                      <Clock className="w-3.5 h-3.5" />
-                      {row.uploadDate}
-                    </div>
+                  <TableCell className="py-4"><span className="text-sm text-slate-600">{row.act2Name}</span></TableCell>
+                  
+                  <TableCell className="py-4 text-center"><span className="text-sm text-slate-600 font-medium">{300}</span></TableCell>
+                  <TableCell className="py-4 text-center">
+                    <span className={`text-sm font-bold ${row.discrepancies.length === 0 ? 'text-emerald-600' : row.discrepancies.length <= 3 ? 'text-amber-600' : 'text-red-600'}`}>
+                      {row.discrepancies.length}
+                    </span>
                   </TableCell>
-                  <TableCell className="py-4 text-center"><span className="text-sm text-slate-600 font-medium">{row.rows.toLocaleString()}</span></TableCell>
                   <TableCell className="py-4">
                     <Badge variant="outline" className={`${st.classes} border font-medium text-xs gap-1`}>
                       <StatusIcon className="w-3 h-3" />
                       {st.label}
                     </Badge>
                   </TableCell>
-                  <TableCell className="py-4 text-center">
-                    <span className={`text-sm font-bold ${row.discrepancies === 0 ? 'text-emerald-600' : row.discrepancies <= 3 ? 'text-amber-600' : 'text-red-600'}`}>
-                      {row.discrepancies}
-                    </span>
+                  <TableCell className="py-4">
+                    <div className="flex items-center gap-2 text-sm text-slate-400">
+                      <Clock className="w-3.5 h-3.5" />
+                      {"20 янв 2026, 08:55"}
+                    </div>
                   </TableCell>
                   <TableCell className="py-4 pr-6">
                     <Link to={createPageUrl('collationDetails') + `?id=${row.id}`}>
