@@ -15,6 +15,11 @@ const initialAuthState: AuthState = {
     authStatus: "idle"
 }
 
+interface SetCredentialsPayload {
+  user?: User;
+  accessToken?: string;
+}
+
 export const authSlice = createSlice({
     name: "auth",
     initialState: initialAuthState,
@@ -25,7 +30,7 @@ export const authSlice = createSlice({
         selectAuthStatus: (state) => state.authStatus
     },
     reducers: {
-        setCredentials: (state, { payload }: PayloadAction<{accessToken: string, user: User}>) => {
+        setCredentials: (state, { payload }: PayloadAction<SetCredentialsPayload>) => {
             state.accessToken = payload.accessToken;
             state.isAuthenticated = true;
             state.authStatus = "succeeded";

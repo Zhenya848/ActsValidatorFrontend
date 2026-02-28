@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Link, Outlet } from 'react-router-dom';
 import { createPageUrl } from "./shared/utils"
 import { motion, AnimatePresence } from 'framer-motion';
@@ -8,7 +8,7 @@ import { Bounce, ToastContainer } from "react-toastify";
 import { useSelector } from 'react-redux';
 import { selectUser } from './app/auth.slice';
 import { UserDropdown } from './widgets/components/layout/UserDropdown';
-import { useSetUser } from './features/accounts/hooks/useSetUser';
+import { useInitAuth } from './features/accounts/hooks/useInitAuth';
 
 const navItems = [
   { name: 'Главная', page: '', icon: Home },
@@ -25,11 +25,7 @@ export default function RootLayout({ currentPageName = "" }: IRootLayoutParamete
   const [mobileOpen, setMobileOpen] = useState(false);
   const isLanding = currentPageName === 'home';
   const user = useSelector(selectUser);
-  const { setUser, isLoading } = useSetUser();
-
-  useEffect(() => {
-    setUser();
-  }, [])
+  const { isLoading } = useInitAuth();
 
   return (
     <div className="min-h-screen bg-white">
@@ -144,7 +140,18 @@ export default function RootLayout({ currentPageName = "" }: IRootLayoutParamete
       </nav>
 
       <main>
-        <Outlet />
+        {isLoading 
+        ? 
+        (
+          <div className="flex flex-col items-center justify-center min-h-[60vh]">
+             <Loader2 className="w-10 h-10 animate-spin text-indigo-500 mb-4" />
+             <p className="text-slate-500 animate-pulse">Подготовка рабочего пространства...</p>
+          </div>
+        ) 
+        : 
+        (
+          <Outlet />
+        )}
 
         <ToastContainer
           position="top-right"

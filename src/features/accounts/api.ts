@@ -1,6 +1,7 @@
 import type { LoginResponse } from "./responses/LoginResponse";
 import { baseApi, USER_SERVICE_API_URL } from "../../app/baseApi";
 import type { Envelope } from "../../shared/api/Envelope";
+import type { User } from "../../entities/accounts/User";
 
 export const authApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
@@ -35,11 +36,10 @@ export const authApi = baseApi.injectEndpoints({
             })
         }),
 
-        updateUser: builder.mutation<Envelope<string>, { userId: string, userName: string }>({
-            query: ({ userId, userName }) => ({
-                url: USER_SERVICE_API_URL + "users/" + userId,
-                body: { userName },
-                method: "PUT"
+        sayHello: builder.query<string, void>({
+            query: () => ({
+                url: USER_SERVICE_API_URL + "say-hello",
+                method: "GET"
             })
         })
     })
@@ -50,5 +50,5 @@ export const {
     useLoginMutation,
     useRefreshMutation,
     useLogoutMutation,
-    useUpdateUserMutation
+    useSayHelloQuery
  } = authApi;
