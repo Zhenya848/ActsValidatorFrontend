@@ -31,10 +31,16 @@ export const authSlice = createSlice({
     },
     reducers: {
         setCredentials: (state, { payload }: PayloadAction<SetCredentialsPayload>) => {
-            state.accessToken = payload.accessToken;
-            state.isAuthenticated = true;
+            if (payload.accessToken) {
+                state.accessToken = payload.accessToken;
+                state.isAuthenticated = true;
+            }
+
+            if (payload.user) {
+                state.user = payload.user;
+            }
+
             state.authStatus = "succeeded";
-            state.user = payload.user;
         },
 
         logout: (state) => {

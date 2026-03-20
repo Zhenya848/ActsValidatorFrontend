@@ -1,15 +1,22 @@
-import { useSelector } from "react-redux";
-import { useSayHelloQuery } from "../api";
+import { useGetUserQuery } from "../api";
 import { GetCookies } from "../GetCookies";
-import { selectUser } from "../../../app/auth.slice";
+import { setCredentials } from "../../../app/auth.slice";
+import { useAppDispatch } from "../../../app/store";
+import { useEffect } from "react";
 
 export const useInitAuth = () => {
     const isRefreshToken = GetCookies("refreshToken");
-    const user = useSelector(selectUser);
+    const dispatch = useAppDispatch();
 
-    const { isLoading, isError, isSuccess } = useSayHelloQuery(undefined, {
-        skip: !isRefreshToken || user != null,
+    const { data: userData, isLoading, isError, isSuccess } = useGetUserQuery(undefined, {
+        skip: !isRefreshToken
     });
+
+    useEffect(() => {
+        if (isSuccess && userData) {
+            dispatch(setCredentials({ user: userData.result! }));
+        }
+    }, [isSuccess, userData, dispatch]);
 
     return {
         isLoading,

@@ -20,10 +20,10 @@ export const collationApi = baseApi.injectEndpoints({
                 };
             }
         }),
-        get: builder.query<Envelope<PageList<Collation>>, { page: number, pageSize: number, actName: string, orderBy: string, orderByDesc: boolean }>({
-            query: ({ page, pageSize, actName, orderBy, orderByDesc }) => {
+        get: builder.query<Envelope<PageList<Collation>>, { page: number, pageSize: number, actName: string, statusFilter: string }>({
+            query: ({ page, pageSize, actName, statusFilter }) => {
                 return {
-                    url: ACTS_SERVICE_API_URL + `collations?Page=${page}&PageSize=${pageSize}&ActName=${actName}&OrderBy=${orderBy}&OrderByDesc=${orderByDesc}`,
+                    url: ACTS_SERVICE_API_URL + `collations?Page=${page}&PageSize=${pageSize}&ActName=${actName}&StatusFilter=${statusFilter}`,
                     method: 'GET'
                 };
             }

@@ -1,7 +1,10 @@
-import type { CollationRow } from "./CollationRow"
-
 export type Discrepancy = {
-    act1: CollationRow;
-    act2: CollationRow;
-    cellName: string;
+    act1Row: number,
+    act2Row: number,
+    act1Value: string,
+    act2Value: string,
+    field: string,
+    difference: string,
+    severity: string,
+    detectedBy: string[]
 }
