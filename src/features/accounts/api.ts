@@ -41,6 +41,35 @@ export const authApi = baseApi.injectEndpoints({
                 url: USER_SERVICE_API_URL + "say-hello",
                 method: "GET"
             })
+        }),
+
+        getUser: builder.query<Envelope<User>, void>({
+            query: () => ({
+                url: USER_SERVICE_API_URL + "get-user",
+                method: "GET"
+            })
+        }),
+
+        updateUser: builder.mutation<Envelope<string>, { userName: string, email: string, password?: string, oldPassword?: string}>({
+            query: ({ userName, email, password, oldPassword }) => ({
+                url: USER_SERVICE_API_URL + "update-user",
+                body: { userName, email, password, oldPassword },
+                method: "PUT"
+            })
+        }),
+
+        sendVerificationCode: builder.mutation<Envelope<null>, void>({
+            query: () => ({
+                url: USER_SERVICE_API_URL + "send-verification-code",
+                method: "POST"
+            })
+        }),
+
+        verifyEmail: builder.mutation<Envelope<null>, { userId: string, token: string }>({
+            query: ({ userId, token }) => ({
+                url: USER_SERVICE_API_URL + `email-verification?userId=${userId}&token=${token}`,
+                method: "GET"
+            })
         })
     })
 });
@@ -50,5 +79,9 @@ export const {
     useLoginMutation,
     useRefreshMutation,
     useLogoutMutation,
-    useSayHelloQuery
+    useSayHelloQuery,
+    useGetUserQuery,
+    useUpdateUserMutation,
+    useSendVerificationCodeMutation,
+    useVerifyEmailMutation
  } = authApi;

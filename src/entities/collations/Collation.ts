@@ -1,4 +1,3 @@
-import type { AiRequest } from "./AiRequest";
 import type { Discrepancy } from "./Discrepancy";
 
 export type Collation = {
@@ -6,6 +5,10 @@ export type Collation = {
     userId: string;
     act1Name: string;
     act2Name: string;
-    discrepancies: Discrepancy[];
-    aiRequest?: AiRequest;
+    coincidencesCount: number;
+    rowsProcessed: number;
+    collationErrors: Discrepancy[];
+    status: "Success" | "Warning" | "Error",
+    aiRequestStatus: "Pending" | "Completed" | "Failed",
+    createdAt: Date
 }

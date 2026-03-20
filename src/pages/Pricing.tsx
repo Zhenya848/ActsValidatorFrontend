@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Check, Zap, Star, Building2, Rocket } from 'lucide-react';
 import { Button } from '../shared/ui/button';

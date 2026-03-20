@@ -8,6 +8,7 @@ import Register from "../pages/Register";
 import Login from "../pages/Login";
 import Pricing from "../pages/Pricing";
 import Settings from "../pages/Settings";
+import EmailVerified from "../pages/EmailVerified";
 
 export const router = createBrowserRouter([
     {
@@ -28,7 +29,7 @@ export const router = createBrowserRouter([
           element: <History />
         },
         {
-          path: "/collationDetails",
+          path: "history/details",
           element: <CollationDetails />
         },
         {
@@ -46,6 +47,10 @@ export const router = createBrowserRouter([
         {
           path: "/settings",
           element: <Settings />
+        },
+        {
+          path: "/email-verified",
+          element: <EmailVerified />
         }
       ],
       errorElement: <div>404 Страница не найдена!</div>

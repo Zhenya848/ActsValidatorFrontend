@@ -3,4 +3,5 @@ export type User = {
     email: string;
     userName: string;
     displayName: string;
+    emailVerified: boolean
 }

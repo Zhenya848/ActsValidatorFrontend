@@ -3,7 +3,11 @@ import { createPageUrl } from "../../../shared/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import type { User as UserEntity } from "../../../entities/accounts/User";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useLogoutMutation } from "../../../features/accounts/api";
+import { showError } from "../../../shared/helpers/showError";
+import { useAppDispatch } from "../../../app/store";
+import { logout } from "../../../app/auth.slice";
 
 interface IUserDropdownParameters {
   user: UserEntity
@@ -11,10 +15,26 @@ interface IUserDropdownParameters {
 
 export function UserDropdown({ user }: IUserDropdownParameters) {
   const [open, setOpen] = useState(false);
-  const ref = useRef(null);
+  const ref = useRef<HTMLInputElement | null>(null);
+  const [logoutUser, { isLoading }] = useLogoutMutation();
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+
+  const handleLogout = async () => {
+    try {
+      await logoutUser();
+      dispatch(logout());
+      
+      navigate("/login");
+
+    }
+    catch(error: unknown) {
+      showError(error);
+    }
+  }
 
   useEffect(() => {
-    const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    const handler = (e: MouseEvent) => { if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false); };
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
   }, []);
@@ -78,9 +98,12 @@ export function UserDropdown({ user }: IUserDropdownParameters) {
             </div>
 
             <div className="py-2 px-2 border-t border-slate-100">
-              <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-rose-500 hover:bg-rose-50 transition-colors">
-                <LogOut className="w-4 h-4" />
-                Выйти
+              <button 
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-rose-500 hover:bg-rose-50 transition-colors"
+                onClick={handleLogout}
+                disabled={isLoading}>
+                  <LogOut className="w-4 h-4" />
+                  Выйти
               </button>
             </div>
           </motion.div>
