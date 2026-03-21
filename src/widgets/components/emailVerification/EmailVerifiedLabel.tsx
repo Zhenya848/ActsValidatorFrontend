@@ -6,10 +6,15 @@ import { useVerifyEmailMutation } from "../../../features/accounts/api";
 import { Link, useSearchParams } from "react-router-dom";
 import { useEffect } from "react";
 import { showError } from "../../../shared/helpers/showError";
+import { useSelector } from "react-redux";
+import { selectUser, setCredentials } from "../../../app/auth.slice";
+import { useAppDispatch } from "../../../app/store";
 
 export function EmailVerifiedLabel() {
-    const [verifyEmail, { isLoading }] = useVerifyEmailMutation();
+    const [verifyEmail, { isLoading, isSuccess }] = useVerifyEmailMutation();
     const [searchParams] = useSearchParams();
+    const user = useSelector(selectUser);
+    const dispatch = useAppDispatch();
     
     const userId = searchParams.get('userId');
     const token = searchParams.get('token');
@@ -17,18 +22,35 @@ export function EmailVerifiedLabel() {
     useEffect(() => {
         const fetch = async () => {
             try {
-                if (!userId || !token)
+                if (!userId || !token) 
                     return;
 
-                await verifyEmail({ userId: userId, token: token}).unwrap();
-            }
-            catch(error: unknown) {
+                if (user?.emailVerified) 
+                    return;
+
+                await verifyEmail({ userId, token }).unwrap();
+            } 
+            catch (error: unknown) {
                 showError(error);
             }
-        }
+        };
 
         fetch();
-    }, [])
+    }, [userId, token, verifyEmail, user?.emailVerified]);
+
+    useEffect(() => {
+        if (!isSuccess || !user || user.emailVerified) 
+            return;
+
+        dispatch(
+            setCredentials({
+                user: {
+                    ...user,
+                    emailVerified: true,
+                },
+            })
+        );
+    }, [isSuccess, user, dispatch]);
 
     if (isLoading || !userId || !token)
         return;
@@ -40,7 +62,7 @@ export function EmailVerifiedLabel() {
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
-                className="mx-auto w-20 h-20 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center mb-6 shadow-lg shadow-emerald-200"
+                className="mx-auto w-20 h-20 rounded-full bg-linear-to-br from-emerald-400 to-emerald-600 flex items-center justify-center mb-6 shadow-lg shadow-emerald-200"
                 >
                 <CheckCircle2 className="w-10 h-10 text-white" />
                 </motion.div>

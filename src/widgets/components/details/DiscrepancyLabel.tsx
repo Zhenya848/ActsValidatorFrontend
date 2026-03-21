@@ -3,10 +3,9 @@ import type { Collation } from "../../../entities/collations/Collation";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "../../../shared/utils";
 import { Button } from "../../../shared/ui/button";
-import { ArrowLeft, CheckCircle2, Download } from "lucide-react";
+import { ArrowLeft, CheckCircle2 } from "lucide-react";
 import DiscrepancyCard from "./DiscrepancyCard";
 import AIStatusBanner from "./AIStatusBanner";
-import { GetCookies } from "../../../features/accounts/GetCookies";
 import * as signalR from "@microsoft/signalr";
 import { useAppSelector } from "../../../app/store";
 import { selectAccessToken } from "../../../app/auth.slice";
@@ -33,30 +32,25 @@ const getSource = (c: Discrepancy) => {
 };
 
 export default function DiscrepanciesLabel() {
-  const refreshToken = GetCookies("refreshToken");
   const navigate = useNavigate();
-  
-  useEffect(() => {
-    if (!refreshToken) {
-      navigate("/login");
-      return;
-    }
-  }, [refreshToken])
-
-  const [aiReady, setAiReady] = useState(false);
   const [filter, setFilter] = useState('all');
 
   const location = useLocation();
   const collation: Collation = location.state?.collationData;
   const accessToken = useAppSelector(selectAccessToken);
-
-  console.log(collation)
-
   const [collationErrors, setCollationErrors] = useState<Discrepancy[]>(collation.collationErrors);
+  const [aiReady, setAiReady] = useState(!collation ? false : collation.aiRequestStatus == "Completed");
 
   useEffect(() => {
-    if (!accessToken || collation.aiRequestStatus == "Completed") {
-      setAiReady(true);
+    if (!collation) {
+      navigate("/history");
+
+      return;
+    }
+
+    if (!accessToken) {
+      navigate("/history");
+
       return;
     }
 
@@ -75,7 +69,7 @@ export default function DiscrepanciesLabel() {
                 setAiReady(true);
             });
         });
-  }, [accessToken]);
+  }, [accessToken, collation, navigate]);
 
   if (!collation)
     return;
@@ -112,10 +106,10 @@ export default function DiscrepanciesLabel() {
                 <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Детали сверки</h1>
                 <p className="mt-1 text-slate-500 text-sm">{collation.act1Name} · {collation.act2Name}</p>
               </div>
-              <Button variant="outline" className="rounded-xl border-slate-200 gap-2 w-fit text-sm h-10">
+              {/*<Button variant="outline" className="rounded-xl border-slate-200 gap-2 w-fit text-sm h-10">
                 <Download className="w-4 h-4" />
                 Скачать отчёт
-              </Button>
+              </Button>*/}
             </div>
           </div>
 

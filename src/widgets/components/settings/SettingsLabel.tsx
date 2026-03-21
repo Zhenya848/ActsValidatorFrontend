@@ -1,16 +1,17 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { selectUser } from "../../../app/auth.slice";
 import { useSendVerificationCodeMutation, useUpdateUserMutation } from "../../../features/accounts/api";
 import { showError } from "../../../shared/helpers/showError";
-import { User, Mail, Lock, Eye, EyeOff, CheckCircle2, ShieldCheck, Bell } from 'lucide-react';
+import { User, Mail, Lock, Eye, EyeOff, CheckCircle2, ShieldCheck } from 'lucide-react';
 import { Input } from "../../../shared/ui/input";
 import { Section } from "./Section";
-import { Toggle } from "./Toggle";
 import { SaveButton } from "./SaveButton";
+import { useNavigate } from "react-router-dom";
 
 export function SettingsLabel() {
     const user = useSelector(selectUser);
+    const navigate = useNavigate();
     
     const [name, setName] = useState(user?.displayName ?? '');
     const [email, setEmail] = useState(user?.email ?? '');
@@ -43,6 +44,11 @@ export function SettingsLabel() {
         setSavedSection(section);
     };
 
+    useEffect(() => {
+        if (!user)
+            navigate("/")
+    }, [navigate, user])
+
     return (
         <div>
             <h1 className="text-3xl font-bold text-slate-900 mb-2">Настройки</h1>
@@ -68,7 +74,7 @@ export function SettingsLabel() {
                     className="h-11 rounded-xl border-slate-200"
                     placeholder="Email"
                 />
-                {!user?.emailVerified && (
+                {user?.emailVerified == false && (
                     <div className={`mt-3 flex items-center justify-between px-4 py-3 rounded-xl border ${
                     isSendVerificationCodeSuccess ? 'bg-emerald-50 border-emerald-200' : 'bg-amber-50 border-amber-200'
                     }`}>
