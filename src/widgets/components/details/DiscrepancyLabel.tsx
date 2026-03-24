@@ -64,7 +64,6 @@ export default function DiscrepanciesLabel() {
     connection.start()
         .then(() => {
             connection.on("ReceiveAiAnalysis", (data) => {
-                console.log("Ура! ИИ закончил:", data);
                 setCollationErrors(data.discrepancies);
                 setAiReady(true);
             });
@@ -85,7 +84,7 @@ export default function DiscrepanciesLabel() {
   });
 
   const aiOnlyCount = collationErrors.filter(
-    (d) => !d.detectedBy.includes('algorithm') && d.detectedBy.includes('ai')
+    (d) => !d.detectedBy.includes('algorithm')
   ).length;
 
   const visibleDiscrepancyCount = aiReady
@@ -94,83 +93,75 @@ export default function DiscrepanciesLabel() {
 
   return (
     <div>
-        <div className="mb-8">
-            <Link to={createPageUrl('history')}>
-              <Button variant="ghost" className="mb-4 -ml-3 text-slate-500 hover:text-slate-700 rounded-lg">
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Назад к истории
-              </Button>
-            </Link>
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <div>
-                <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Детали сверки</h1>
-                <p className="mt-1 text-slate-500 text-sm">{collation.act1Name} · {collation.act2Name}</p>
-              </div>
-              {/*<Button variant="outline" className="rounded-xl border-slate-200 gap-2 w-fit text-sm h-10">
-                <Download className="w-4 h-4" />
-                Скачать отчёт
-              </Button>*/}
-            </div>
+      <div className="mb-8">
+        <Link to={createPageUrl('History')}>
+          <Button variant="ghost" className="mb-4 -ml-3 text-slate-500 hover:text-slate-700 rounded-lg">
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Назад к истории
+          </Button>
+        </Link>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Детали сверки</h1>
+            <p className="mt-1 text-slate-500 text-sm">{collation.act1Name} · {collation.act2Name}</p>
           </div>
+        </div>
+      </div>
 
-          <div className="grid grid-cols-3 gap-3 mb-5">
-            {[
-              { label: 'Строк проверено', value: collation.rowsProcessed, color: 'text-slate-800' },
-              { label: 'Совпадений', value: collation.coincidencesCount, color: 'text-emerald-600' },
-              { label: 'Расхождений', value: visibleDiscrepancyCount, color: 'text-rose-600' },
-            ].map((s) => (
-              <div key={s.label} className="bg-white border border-slate-200 rounded-xl p-4 text-center shadow-sm">
-                <p className={`text-2xl font-bold ${s.color}`}>{s.value}</p>
-                <p className="text-xs text-slate-400 mt-0.5">{s.label}</p>
-              </div>
-            ))}
+      <div className="grid grid-cols-3 gap-3 mb-5">
+        {[
+          { label: 'Строк проверено', value: collation.rowsProcessed, color: 'text-slate-800' },
+          { label: 'Совпадений', value: collation.coincidencesCount, color: 'text-emerald-600' },
+          { label: 'Расхождений', value: visibleDiscrepancyCount, color: 'text-rose-600' },
+        ].map((s) => (
+          <div key={s.label} className="bg-white border border-slate-200 rounded-xl p-4 text-center shadow-sm">
+            <p className={`text-2xl font-bold ${s.color}`}>{s.value}</p>
+            <p className="text-xs text-slate-400 mt-0.5">{s.label}</p>
           </div>
+        ))}
+      </div>
 
-          {/* AI Banner */}
-          <div className="mb-6">
-            <AIStatusBanner aiReady={aiReady} aiOnlyCount={aiOnlyCount} />
-          </div>
+      <div className="mb-6">
+        <AIStatusBanner aiReady={aiReady} aiOnlyCount={aiOnlyCount} />
+      </div>
 
-          {/* Filter tabs */}
-          <div className="flex flex-wrap gap-2 mb-5">
-            {FILTERS.map((f, i) => {
-              if (!aiReady && (f.key === 'both' || f.key === 'ai')) return null;
-              const count = f.key === 'all'
-                ? visibleItems.length
-                : collationErrors.filter(
-                    (d) => (aiReady || d.detectedBy.includes('algorithm')) && getSource(d) === f.key
-                  ).length;
-              return (
-                <button
-                  key={i}
-                  onClick={() => setFilter(f.key)}
-                  className={`px-3 py-1.5 rounded-xl text-sm font-medium transition-all border ${
-                    filter === f.key
-                      ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
-                      : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300'
-                  }`}
-                >
-                  {f.label} <span className="ml-1 opacity-70">{count}</span>
-                </button>
-              );
-            })}
-          </div>
+      <div className="flex flex-wrap gap-2 mb-5">
+        {FILTERS.map((f) => {
+          if (!aiReady && (f.key === 'both' || f.key === 'ai')) return null;
+          const count = f.key === 'all'
+            ? visibleItems.length
+            : collationErrors.filter(
+                (d) => (aiReady || d.detectedBy.includes('algorithm')) && getSource(d) === f.key
+              ).length;
+          return (
+            <button
+              key={f.key}
+              onClick={() => setFilter(f.key)}
+              className={`px-3 py-1.5 rounded-xl text-sm font-medium transition-all border ${
+                filter === f.key
+                  ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
+                  : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300'
+              }`}
+            >
+              {f.label} <span className="ml-1 opacity-70">{count}</span>
+            </button>
+          );
+        })}
+      </div>
 
-          {/* Discrepancy list */}
-          <div className="space-y-3">
-            {visibleItems.map((item, i) => (
-              <DiscrepancyCard key={i} item={item} index={i} aiReady={aiReady} />
-            ))}
-          </div>
+      <div className="space-y-3">
+        {visibleItems.map((item, i) => (
+          <DiscrepancyCard key={i} item={item} index={i} aiReady={aiReady} />
+        ))}
+      </div>
 
-          {/* Matched rows */}
-          <div className="mt-8 bg-white border border-slate-200 rounded-2xl p-8 text-center shadow-sm">
-            <div className="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center mx-auto mb-4">
-              <CheckCircle2 className="w-6 h-6 text-emerald-500" />
-            </div>
-            <p className="font-semibold text-slate-800">{collation.coincidencesCount} строк полностью совпали</p>
-            <p className="text-sm text-slate-400 mt-1">Данные идентичны в обоих документах</p>
-          </div>
+      <div className="mt-8 bg-white border border-slate-200 rounded-2xl p-8 text-center shadow-sm">
+        <div className="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center mx-auto mb-4">
+          <CheckCircle2 className="w-6 h-6 text-emerald-500" />
+        </div>
+        <p className="font-semibold text-slate-800">{collation.coincidencesCount} строк полностью совпали</p>
+        <p className="text-sm text-slate-400 mt-1">Данные идентичны в обоих документах</p>
+      </div>
     </div>
   );
 }
