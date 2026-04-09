@@ -11,12 +11,27 @@ import { useAppSelector } from "../../../app/store";
 import { selectAccessToken } from "../../../app/auth.slice";
 import type { Discrepancy } from "../../../entities/collations/Discrepancy";
 
-const FILTERS = [
+const SOURCE_FILTERS = [
   { key: 'all', label: 'Все расхождения' },
   { key: 'both', label: 'Алгоритм + ИИ' },
   { key: 'algorithm', label: 'Только алгоритм' },
   { key: 'ai', label: 'Только ИИ' },
 ];
+
+const FIELD_FILTERS = [
+  { key: 'all', label: 'Все поля' },
+  { key: 'amount', label: 'По сумме' },
+  { key: 'date', label: 'По дате' },
+  { key: 'none', label: 'Отсутствующие' },
+  { key: 'docNumber', label: 'По номеру документа' },
+];
+
+const FIELD_MAP: Record<string, string[]> = {
+  amount: ['сумма', 'дебет', 'кредит'],
+  date: ['дата'],
+  docNumber: ['документ'],
+  none: ['отсутствует']
+};
 
 const getSource = (c: Discrepancy) => {
   const hasAlgo = c.detectedBy.includes('algorithm');
@@ -33,7 +48,8 @@ const getSource = (c: Discrepancy) => {
 
 export default function DiscrepanciesLabel() {
   const navigate = useNavigate();
-  const [filter, setFilter] = useState('all');
+  const [sourceFilter, setSourceFilter] = useState('all');
+  const [fieldFilter, setFieldFilter] = useState('all');
 
   const location = useLocation();
   const collation: Collation = location.state?.collationData;
@@ -73,14 +89,18 @@ export default function DiscrepanciesLabel() {
   if (!collation)
     return;
 
-  const visibleItems = collationErrors.filter((d) => {
+  const itemsFilteredBySource = collationErrors.filter((d) => {
     if (!aiReady && !d.detectedBy.includes('algorithm')) 
         return false;
 
-    if (filter === 'all') 
-        return true;
+    return sourceFilter === 'all' || getSource(d) === sourceFilter;
+  });
 
-    return getSource(d) === filter;
+  const visibleItems = itemsFilteredBySource.filter((d) => {
+    if (!aiReady && !d.detectedBy.includes('algorithm')) 
+        return false;
+
+    return fieldFilter === 'all' || FIELD_MAP[fieldFilter]?.includes(d.field.toLowerCase());
   });
 
   const aiOnlyCount = collationErrors.filter(
@@ -126,19 +146,43 @@ export default function DiscrepanciesLabel() {
       </div>
 
       <div className="flex flex-wrap gap-2 mb-5">
-        {FILTERS.map((f) => {
+        {SOURCE_FILTERS.map((f) => {
           if (!aiReady && (f.key === 'both' || f.key === 'ai')) return null;
           const count = f.key === 'all'
-            ? visibleItems.length
+            ? collationErrors.length
             : collationErrors.filter(
                 (d) => (aiReady || d.detectedBy.includes('algorithm')) && getSource(d) === f.key
               ).length;
           return (
             <button
               key={f.key}
-              onClick={() => setFilter(f.key)}
+              onClick={() => setSourceFilter(f.key)}
               className={`px-3 py-1.5 rounded-xl text-sm font-medium transition-all border ${
-                filter === f.key
+                sourceFilter === f.key
+                  ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
+                  : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300'
+              }`}
+            >
+              {f.label} <span className="ml-1 opacity-70">{count}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      <div className="flex flex-wrap gap-2 mb-5">
+        {FIELD_FILTERS.map((f) => {
+          const count = f.key === 'all'
+            ? itemsFilteredBySource.length
+            : itemsFilteredBySource.filter((d) =>
+                (aiReady || d.detectedBy.includes('algorithm')) &&
+                FIELD_MAP[f.key]?.includes(d.field)
+              ).length;
+          return (
+            <button
+              key={f.key}
+              onClick={() => setFieldFilter(f.key)}
+              className={`px-3 py-1.5 rounded-xl text-sm font-medium transition-all border ${
+                fieldFilter === f.key
                   ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
                   : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300'
               }`}
