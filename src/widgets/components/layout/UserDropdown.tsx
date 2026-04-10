@@ -50,7 +50,7 @@ export function UserDropdown({ user }: IUserDropdownParameters) {
         </div>
         <div className="hidden md:block text-left">
           <p className="text-sm font-semibold text-slate-800 leading-tight">{user.displayName}</p>
-          <p className="text-xs text-slate-400 leading-tight">{0} кредитов</p>
+          <p className="text-xs text-slate-400 leading-tight">{user.isSubscribed ? 'Подписка активна' : `${user.balance} сверок`}</p>
         </div>
       </button>
 
@@ -63,6 +63,7 @@ export function UserDropdown({ user }: IUserDropdownParameters) {
             transition={{ duration: 0.15 }}
             className="absolute right-0 mt-2 w-64 bg-white border border-slate-200 rounded-2xl shadow-xl shadow-slate-200/60 z-50 overflow-hidden"
           >
+            {/* User info */}
             <div className="px-4 py-4 border-b border-slate-100">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-sm flex-shrink-0">
@@ -76,12 +77,13 @@ export function UserDropdown({ user }: IUserDropdownParameters) {
               <div className="mt-3 flex items-center justify-between px-3 py-2 rounded-xl bg-indigo-50 border border-indigo-100">
                 <div className="flex items-center gap-2">
                   <Zap className="w-3.5 h-3.5 text-indigo-600" />
-                  <span className="text-xs font-medium text-indigo-700">Кредиты</span>
+                  <span className="text-xs font-medium text-indigo-700">{user.isSubscribed ? 'Подписка' : 'Сверки'}</span>
                 </div>
-                <span className="text-sm font-bold text-indigo-700">{0}</span>
+                <span className="text-sm font-bold text-indigo-700">{user.isSubscribed ? 'Активна' : user.balance}</span>
               </div>
             </div>
 
+            {/* Menu */}
             <div className="py-2 px-2">
               <Link to={createPageUrl('Settings')} onClick={() => setOpen(false)}>
                 <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-600 hover:bg-slate-50 transition-colors">
@@ -103,8 +105,8 @@ export function UserDropdown({ user }: IUserDropdownParameters) {
                 onClick={handleLogout}
                 disabled={isLoading}>
                   <LogOut className="w-4 h-4" />
-                  Выйти
-              </button>
+                    Выйти
+                  </button>
             </div>
           </motion.div>
         )}
