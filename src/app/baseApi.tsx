@@ -6,7 +6,7 @@ import { setCredentials } from "./auth.slice";
 
 export const ACTS_SERVICE_API_URL = "http://localhost:5288/api/Acts/"
 export const USER_SERVICE_API_URL = "http://localhost:5172/api/Auth/";
-export const PAYMENT_SERVICE_API_URL = "/api/Payments/";
+export const PAYMENT_SERVICE_API_URL = "http://localhost:5175/api/Payments/";
 
 const baseQuery = fetchBaseQuery({
     credentials: "include",
