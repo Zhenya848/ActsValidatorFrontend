@@ -3,7 +3,7 @@ import { Upload, Search, BarChart3, Clock, Shield, FileCheck } from 'lucide-reac
 
 const features = [
   { icon: Upload, title: 'Быстрая загрузка', description: 'Перетащите Excel-файл или выберите из папки — загрузка занимает секунды.', color: 'bg-indigo-50 text-indigo-600' },
-  { icon: Search, title: 'Двойная проверка ИИ + Алгоритм', description: 'Сверка документов двумя методами: нейросеть и классический алгоритм для максимальной точности.', color: 'bg-violet-50 text-violet-600' },
+  { icon: Search, title: 'Проверка продвинутым алгоритмом', description: 'Сверка документов умным сопоставлением для максимальной точности.', color: 'bg-violet-50 text-violet-600' },
   { icon: BarChart3, title: 'Наглядные отчёты', description: 'Визуализация результатов сверки с детализацией по каждой строке.', color: 'bg-emerald-50 text-emerald-600' },
   { icon: Clock, title: 'История операций', description: 'Полный журнал загрузок с возможностью просмотра предыдущих сверок.', color: 'bg-amber-50 text-amber-600' },
   { icon: Shield, title: 'Безопасность данных', description: 'Все документы защищены шифрованием и доступны только вам.', color: 'bg-rose-50 text-rose-600' },

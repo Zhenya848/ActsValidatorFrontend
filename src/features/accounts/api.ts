@@ -70,6 +70,22 @@ export const authApi = baseApi.injectEndpoints({
                 url: USER_SERVICE_API_URL + `email-verification?userId=${userId}&token=${token}`,
                 method: "GET"
             })
+        }),
+
+        forgotPassword: builder.mutation<Envelope<null>, { email: string }>({
+            query: ({ email }) => ({
+                url: USER_SERVICE_API_URL + `forgot-password`,
+                body: { email },
+                method: "POST"
+            })
+        }),
+
+        resetPassword: builder.mutation<Envelope<null>, { userId: string, token: string, newPassword: string }>({
+            query: ({ userId, token, newPassword }) => ({
+                url: USER_SERVICE_API_URL + `reset-password?userId=${userId}&token=${token}`,
+                body: { newPassword },
+                method: "POST"
+            })
         })
     })
 });
@@ -83,5 +99,7 @@ export const {
     useGetUserQuery,
     useUpdateUserMutation,
     useSendVerificationCodeMutation,
-    useVerifyEmailMutation
+    useVerifyEmailMutation,
+    useForgotPasswordMutation,
+    useResetPasswordMutation
  } = authApi;

@@ -19,7 +19,7 @@ function getErrorMessages(error: FetchBaseQueryError | SerializedError | undefin
 
             if (errorData && errorData.responseErrors) {
                 return errorData.responseErrors.map(error => {
-                    return ErrorMessages[error.code] || error.message || "Неизвестная ошибка";
+                    return ErrorMessages[error.code] || "Неизвестная ошибка";
                 });
             }
 

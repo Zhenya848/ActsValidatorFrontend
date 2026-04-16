@@ -9,6 +9,8 @@ import Login from "../pages/Login";
 import Pricing from "../pages/Pricing";
 import Settings from "../pages/Settings";
 import EmailVerified from "../pages/EmailVerified";
+import ForgotPassword from "../pages/ForgotPassword";
+import ResetPassword from "../pages/ResetPassword";
 
 export const router = createBrowserRouter([
     {
@@ -51,6 +53,14 @@ export const router = createBrowserRouter([
         {
           path: "/email-verified",
           element: <EmailVerified />
+        },
+        {
+          path: "/forgot-password",
+          element: <ForgotPassword />
+        },
+        {
+          path: "/reset-password",
+          element: <ResetPassword />
         }
       ],
       errorElement: <div>404 Страница не найдена!</div>
