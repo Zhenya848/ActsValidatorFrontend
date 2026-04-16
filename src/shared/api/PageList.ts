@@ -4,6 +4,8 @@ export type PageList<T> = {
     totalCount: number;
     page: number;
     pageSize: number;
+    successfulCollations: number;
+    averageAccuracy: number;
 
     hasNextPage: boolean;
     hasPreviousPage: boolean;

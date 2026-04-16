@@ -29,7 +29,7 @@ export default function HeroSection() {
             </h1>
 
             <p className="mt-6 text-lg sm:text-xl text-slate-500 leading-relaxed max-w-lg">
-              Двойная проверка ИИ и алгоритмом по дебету, кредиту и датам. Находите несостыковки мгновенно в одном удобном интерфейсе.
+              Проверка по дебету, кредиту, документу и датам. Находите несостыковки мгновенно в одном удобном интерфейсе.
             </p>
 
             <div className="mt-10 flex flex-wrap gap-4">

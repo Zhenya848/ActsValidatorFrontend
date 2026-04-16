@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { useAppDispatch } from "../../../app/store";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useLoginMutation } from "../../../features/accounts/api";
 import { setCredentials } from "../../../app/auth.slice";
 import { showError } from "../../../shared/helpers/showError";
 import { ArrowRight, CheckCircle2, Eye, EyeOff, Lock, Mail } from "lucide-react";
 import { Input } from "../../../shared/ui/input";
 import { Button } from "../../../shared/ui/button";
+import { createPageUrl } from "../../../shared/utils";
 
 export function LoginLabel() {
     const [email, setEmail] = useState('');
@@ -121,6 +122,14 @@ export function LoginLabel() {
                     </Button>
                 </form>
             </div>
+
+            <p className="text-center text-sm text-slate-500 mt-6">
+                Забыли пароль?{' '}
+                
+                <Link to={createPageUrl('forgot-password')} className="text-indigo-600 hover:text-indigo-700 font-medium">
+                    Восстановить
+                </Link>
+            </p>
         </div>
     )
 }

@@ -8,8 +8,15 @@ import { Input } from "../../../shared/ui/input";
 import { Section } from "./Section";
 import { SaveButton } from "./SaveButton";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
 export function SettingsLabel() {
+    const requirements = [
+        { label: 'Не менее 8 символов', check: (p: string) => p.length >= 8 },
+        { label: 'Заглавная буква', check: (p: string) => /[A-ZА-Я]/.test(p) },
+        { label: 'Цифра', check: (p: string) => /\d/.test(p) },
+    ];
+
     const user = useSelector(selectUser);
     const navigate = useNavigate();
     
@@ -19,7 +26,7 @@ export function SettingsLabel() {
     const [newPassword, setNewPassword] = useState('');
     const [showCurrent, setShowCurrent] = useState(false);
     const [showNew, setShowNew] = useState(false);
-    const [savedSection, setSavedSection] = useState('');
+    const isPasswordValid = newPassword.length === 0 || requirements.every(req => req.check(newPassword));
 
     const [updateUser, { isLoading: isUpdateUserLoading, isSuccess: isUpdateUserSuccess }] = useUpdateUserMutation();
     const [sendVerificationCode, { isLoading: isSendVerificationCodeLoading, isSuccess: isSendVerificationCodeSuccess }] = useSendVerificationCodeMutation();
@@ -33,15 +40,13 @@ export function SettingsLabel() {
         }
     }
 
-    const save = async (section: string) => {
+    const save = async () => {
         try {
             await updateUser({ userName: name, email: email, password: currentPassword, oldPassword: newPassword }).unwrap();
         }
         catch (error: unknown) {
             showError(error);
         }
-
-        setSavedSection(section);
     };
 
     useEffect(() => {
@@ -62,7 +67,6 @@ export function SettingsLabel() {
                     className="h-11 rounded-xl border-slate-200"
                     placeholder="Имя и фамилия"
                 />
-                <SaveButton saved={savedSection === 'name' && isUpdateUserSuccess} onClick={() => save('name')} disabled={isUpdateUserLoading} />
             </Section>
 
             <Section icon={Mail} title="Электронная почта" iconColor="bg-violet-100 text-violet-600">
@@ -102,7 +106,6 @@ export function SettingsLabel() {
                     )}
                     </div>
                 )}
-                <SaveButton saved={savedSection === 'email' && isUpdateUserSuccess} onClick={() => save('email')} disabled={isUpdateUserLoading} />
             </Section>
 
             <Section icon={Lock} title="Изменить пароль" iconColor="bg-emerald-100 text-emerald-600">
@@ -145,10 +148,24 @@ export function SettingsLabel() {
                             </button>
                         </div>
                     </div>
+
+                    {newPassword.length > 0 && (
+                    <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="mt-2.5 space-y-1.5">
+                        {requirements.map((req) => {
+                        const ok = req.check(newPassword);
+                        return (
+                            <div key={req.label} className="flex items-center gap-2">
+                            <CheckCircle2 className={`w-3.5 h-3.5 transition-colors ${ok ? 'text-emerald-500' : 'text-slate-300'}`} />
+                            <span className={`text-xs transition-colors ${ok ? 'text-emerald-600' : 'text-slate-400'}`}>{req.label}</span>
+                            </div>
+                        );
+                        })}
+                    </motion.div>
+                    )}
                 </div>
-                
-                <SaveButton label="Изменить пароль" saved={savedSection === 'password' && isUpdateUserSuccess} onClick={() => save('password')} disabled={isUpdateUserLoading} />
             </Section>
+
+            <SaveButton saved={isUpdateUserSuccess} onClick={save} disabled={isUpdateUserLoading || isPasswordValid == false} />
 
             {/*<Section icon={Bell} title="Уведомления" iconColor="bg-rose-100 text-rose-600">
                 <div className="space-y-3">

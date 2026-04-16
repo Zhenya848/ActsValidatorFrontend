@@ -94,7 +94,7 @@ export function UserDropdown({ user }: IUserDropdownParameters) {
               <Link to={createPageUrl('Pricing')} onClick={() => setOpen(false)}>
                 <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-600 hover:bg-slate-50 transition-colors">
                   <CreditCard className="w-4 h-4 text-slate-400" />
-                  Купить кредиты
+                  Купить сверки
                 </button>
               </Link>
             </div>

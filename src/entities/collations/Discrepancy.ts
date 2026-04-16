@@ -5,6 +5,5 @@ export type Discrepancy = {
     act2Value: string,
     field: string,
     difference: string,
-    severity: string,
-    detectedBy: string[]
+    severity: string
 }

@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useCreatePaymentMutation } from '../../../features/payments/api';
 import { showError } from '../../../shared/helpers/showError';
+import { GetCookies } from '../../../features/accounts/GetCookies';
+import { useNavigate } from 'react-router-dom';
 
 const plans = [
   {
@@ -59,14 +61,21 @@ const plans = [
 export function PricesLanding() {
     const [selected, setSelected] = useState(null);
     const [createPayment, { isLoading }] = useCreatePaymentMutation();
+    const refreshToken = GetCookies("refreshToken");
+    const navigate = useNavigate();
 
     const handleCreatePayment = async (productId: string) => {
         try {
-            const paymentUrl = await createPayment({ productId: productId }).unwrap();
-            window.open(paymentUrl.result!);
+          if (!refreshToken) {
+            navigate("/login");
+            return;
+          }
+
+          const paymentUrl = await createPayment({ productId: productId }).unwrap();
+          window.open(paymentUrl.result!);
         }
         catch (error: unknown) {
-            showError(error);
+          showError(error);
         }
     }
 

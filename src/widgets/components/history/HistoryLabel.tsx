@@ -34,6 +34,9 @@ export default function HistoryLabel() {
 
     const collationPageList = collationsData?.result;
     const totalCount = collationPageList?.totalCount ?? 0;
+    const successfulCount = collationPageList?.successfulCollations ?? 0;
+    const failCount = totalCount - successfulCount;
+    const averrageAccuracy = collationPageList?.averageAccuracy ?? 0;
 
     const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
 
@@ -51,11 +54,6 @@ export default function HistoryLabel() {
       error: { label: 'Критично', icon: AlertTriangle, classes: 'bg-red-50 text-red-700 border-red-200' },
     };
 
-    const successCollations = collationPageList?.items?.filter(c => c.collationErrors.length === 0).length ?? 0;
-    const failCollations = (collationPageList?.items?.length ?? 0) - (successCollations ?? 0);
-
-    const averrageAccuracy = ((collationPageList?.items.reduce((sum, x) => sum + x.coincidencesCount * 2 / x.rowsProcessed, 0) ?? 0) / (collationPageList?.items.length ?? 1) * 100).toFixed(1);
-
     type StatItem = {
       label: string;
       value: number | string;
@@ -66,8 +64,8 @@ export default function HistoryLabel() {
 
     const stats: StatItem[] = [
       { label: 'Всего загрузок', value: totalCount, change: '', icon: FileSpreadsheet, color: 'bg-indigo-50 text-indigo-600' },
-      { label: 'Успешных сверок', value: successCollations, change: `${Math.floor(successCollations / totalCount * 100)}% от общего`, icon: FileCheck, color: 'bg-emerald-50 text-emerald-600' },
-      { label: 'С расхождениями', value: failCollations, change: `${Math.floor(failCollations / totalCount * 100)}% от общего`, icon: AlertTriangle, color: 'bg-amber-50 text-amber-600' },
+      { label: 'Успешных сверок', value: successfulCount, change: `${Math.floor(successfulCount / totalCount * 100)}% от общего`, icon: FileCheck, color: 'bg-emerald-50 text-emerald-600' },
+      { label: 'С расхождениями', value: failCount, change: `${Math.floor(failCount / totalCount * 100)}% от общего`, icon: AlertTriangle, color: 'bg-amber-50 text-amber-600' },
       { label: 'Средняя точность', value: `${averrageAccuracy}%`, change: '', icon: TrendingUp, color: 'bg-violet-50 text-violet-600' },
     ];
 

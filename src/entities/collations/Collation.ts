@@ -9,6 +9,5 @@ export type Collation = {
     rowsProcessed: number;
     collationErrors: Discrepancy[];
     status: "Success" | "Warning" | "Error",
-    aiRequestStatus: "Pending" | "Completed" | "Failed",
     createdAt: Date
 }
