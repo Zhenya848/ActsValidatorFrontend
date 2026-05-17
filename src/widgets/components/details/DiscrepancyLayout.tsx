@@ -5,8 +5,6 @@ import { createPageUrl } from "../../../shared/utils";
 import { Button } from "../../../shared/ui/button";
 import { ArrowLeft, CheckCircle2 } from "lucide-react";
 import DiscrepancyCard from "./DiscrepancyCard";
-import { useAppSelector } from "../../../app/store";
-import { selectAccessToken } from "../../../app/auth.slice";
 
 const FIELD_FILTERS = [
   { key: 'all', label: 'Все поля' },
@@ -23,13 +21,12 @@ const FIELD_MAP: Record<string, string[]> = {
   none: ['отсутствует']
 };
 
-export default function DiscrepanciesLabel() {
+export default function DiscrepanciesLayout() {
   const navigate = useNavigate();
   const [fieldFilter, setFieldFilter] = useState('all');
 
   const location = useLocation();
   const collation: Collation = location.state?.collationData;
-  const accessToken = useAppSelector(selectAccessToken);
 
   useEffect(() => {
     if (!collation) {
@@ -37,13 +34,7 @@ export default function DiscrepanciesLabel() {
 
       return;
     }
-
-    if (!accessToken) {
-      navigate("/history");
-
-      return;
-    }
-  }, [accessToken, collation, navigate]);
+  }, [collation, navigate]);
 
   if (!collation)
     return;

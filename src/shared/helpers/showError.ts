@@ -19,7 +19,7 @@ function getErrorMessages(error: FetchBaseQueryError | SerializedError | undefin
 
             if (errorData && errorData.responseErrors) {
                 return errorData.responseErrors.map(error => {
-                    return ErrorMessages[error.code] || "Неизвестная ошибка";
+                    return GetErrorMessage(error.code, error.invalidField);
                 });
             }
 
@@ -32,15 +32,33 @@ function getErrorMessages(error: FetchBaseQueryError | SerializedError | undefin
     return [];
 }
 
+const GetErrorMessage = (code: string, field?: string) => {
+    const message = ErrorMessages[code];
+
+    if (!message)
+        return "Неизвестная ошибка";
+
+    if (message.includes('*'))
+        return field !== null && field !== undefined && field.trim().length > 0 ? message.replace("*", field) : message;
+
+    return message;
+}
+
 const ErrorMessages: Record<string, string> = {
-    "value.is.invalid": "Ожидаются значения",
+    "value.is.invalid": "Значение * некорректное",
     "record.not.found": "Объект не найден",
     "failure": "Что - то пошло не так",
-    "value.is.required": "Ожидаются значения",
+    "value.is.required": "Ожидаются значения для *",
     "user.already.exist": "Такой пользователь уже существует",
+    "DuplicateEmail": "Пользователь с такой почтой уже существует",
     "DuplicateUserName": "Пользователь с таким именем уже существует",
-    "user.notfound": "Пользователь не найден",
+    "user.not.found": "Пользователь не найден",
+    "user.not.verified": "Адрес электронной почты пользователя не подтвержден",
     "user.wrong.credentials": "Неверные пользовательские данные",
     "server.internal": "Ошибка на стороне сервера",
-    "find.chat.failure": "Не удалось найти telegram чат"
+    "send.email.failure": "Не удалось отправить сообщение на электронную почту",
+    "user.invalid.balance": "Недостаточно средств для выполнения этого действия",
+    "PasswordRequiresUpper": "Некорректный пароль",
+    "header.not.found": "Заголовок * не найден",
+    "collation.create.failure": "Не удалось сверить документы. Повторите попытку позже"
 }

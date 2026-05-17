@@ -9,7 +9,7 @@ const stats: Stat[] = [
   { value: '10,000+', label: 'Документов обработано' },
   { value: '99.8%', label: 'Точность анализа' },
   { value: '< 5 сек', label: 'Время обработки' },
-  { value: '500+', label: 'Активных пользователей' },
+  //{ value: '500+', label: 'Активных пользователей' },
 ];
 
 export default function StatsSection() {
@@ -21,7 +21,7 @@ export default function StatsSection() {
       </div>
 
       <div className="relative max-w-7xl mx-auto px-6">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-8">
           {stats.map((stat, i) => (
             <motion.div
               key={stat.label}

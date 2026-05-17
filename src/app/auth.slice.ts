@@ -33,14 +33,16 @@ export const authSlice = createSlice({
         setCredentials: (state, { payload }: PayloadAction<SetCredentialsPayload>) => {
             if (payload.accessToken) {
                 state.accessToken = payload.accessToken;
-                state.isAuthenticated = true;
             }
 
             if (payload.user) {
                 state.user = payload.user;
             }
 
-            state.authStatus = "succeeded";
+            if (payload.user || payload.accessToken) {
+                state.isAuthenticated = true;
+                state.authStatus = "succeeded";
+            }
         },
 
         logout: (state) => {

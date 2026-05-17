@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { RegisterLabel } from '../widgets/components/auth/RegisterLabel';
+import { RegisterLayout } from '../widgets/components/auth/RegisterLayout';
 
 export default function Register() {
   return (
@@ -10,7 +10,7 @@ export default function Register() {
         transition={{ duration: 0.5 }}
         className="w-full max-w-md"
       >
-        <RegisterLabel />
+        <RegisterLayout />
       </motion.div>
     </div>
   );

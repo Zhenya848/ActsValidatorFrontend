@@ -3,15 +3,15 @@ import { ArrowRight, CheckCircle2, Mail } from "lucide-react";
 import { createPageUrl } from "../../../shared/utils";
 import { Button } from "../../../shared/ui/button";
 import { useVerifyEmailMutation } from "../../../features/accounts/api";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect } from "react";
 import { showError } from "../../../shared/helpers/showError";
 import { useSelector } from "react-redux";
 import { selectUser, setCredentials } from "../../../app/auth.slice";
 import { useAppDispatch } from "../../../app/store";
 
-export function EmailVerifiedLabel() {
-    const [verifyEmail, { isLoading, isSuccess }] = useVerifyEmailMutation();
+export function EmailVerifiedLayout() {
+    const [verifyEmail, { isLoading, isSuccess, isError }] = useVerifyEmailMutation();
     const [searchParams] = useSearchParams();
     const user = useSelector(selectUser);
     const dispatch = useAppDispatch();
@@ -19,13 +19,17 @@ export function EmailVerifiedLabel() {
     const userId = searchParams.get('userId');
     const token = searchParams.get('token');
 
+    const navigate = useNavigate();
+
     useEffect(() => {
         const fetch = async () => {
             try {
-                if (!userId || !token) 
+                if (!userId || !token) {
+                    navigate("/");
                     return;
+                }
 
-                if (user?.emailVerified) 
+                if (user?.emailVerified)
                     return;
 
                 await verifyEmail({ userId, token }).unwrap();
@@ -36,7 +40,7 @@ export function EmailVerifiedLabel() {
         };
 
         fetch();
-    }, [userId, token, verifyEmail, user?.emailVerified]);
+    }, []);
 
     useEffect(() => {
         if (!isSuccess || !user || user.emailVerified) 
@@ -52,7 +56,7 @@ export function EmailVerifiedLabel() {
         );
     }, [isSuccess, user, dispatch]);
 
-    if (isLoading || !userId || !token)
+    if (isLoading || !userId || !token || isError)
         return;
 
     return (

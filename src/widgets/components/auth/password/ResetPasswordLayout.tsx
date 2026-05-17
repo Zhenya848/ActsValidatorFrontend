@@ -8,7 +8,7 @@ import { Lock, EyeOff, Eye } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 
-export function ResetPasswordLabel() {
+export function ResetPasswordLayout() {
     const requirements = [
         { label: 'Не менее 8 символов', check: (p: string) => p.length >= 8 },
         { label: 'Заглавная буква', check: (p: string) => /[A-ZА-Я]/.test(p) },

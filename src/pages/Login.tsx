@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { LoginLabel } from "../widgets/components/auth/LoginLabel";
+import { LoginLayout } from "../widgets/components/auth/LoginLayout";
 
 export default function Login() {
     return (
@@ -10,7 +10,7 @@ export default function Login() {
                 transition={{ duration: 0.5 }}
                 className="w-full max-w-md"
             >
-                <LoginLabel />
+                <LoginLayout />
             </motion.div>
         </div>
     )

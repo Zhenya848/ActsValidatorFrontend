@@ -2,7 +2,7 @@ export const formatDate = (value: Date | string | number) => {
   const date = new Date(value);
 
   const months = [
-    'янв','фев','мар','апр','май','июн',
+    'янв','фев','мар','апр','мая','июн',
     'июл','авг','сен','окт','ноя','дек'
   ];
 

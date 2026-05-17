@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { Zap } from 'lucide-react';
-import { PricesLanding } from '../widgets/components/prices/PricesLanding';
+import { PricesLayout } from '../widgets/components/prices/PricesLayout';
 
 export default function Pricing() {
   return (
@@ -24,7 +24,7 @@ export default function Pricing() {
           </p>
         </motion.div>
 
-        <PricesLanding />
+        <PricesLayout />
       </div>
     </div>
   );

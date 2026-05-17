@@ -4,7 +4,7 @@ import { setCredentials } from "../../../app/auth.slice";
 import { useAppDispatch } from "../../../app/store";
 import { useEffect } from "react";
 
-export const useInitAuth = () => {
+export const useInitUser = () => {
     const isRefreshToken = GetCookies("refreshToken");
     const dispatch = useAppDispatch();
 

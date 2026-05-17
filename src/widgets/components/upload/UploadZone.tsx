@@ -34,8 +34,8 @@ export default function UploadZone({ emailVerified = true }) {
 
   const handle = async () => {
     try {
-      const result = await create({ files: files.map(f => f.file) }).unwrap();
-      navigate("/history/details", { state: {collationData: result.result}})
+      const response = await create({ files: files.map(f => f.file) }).unwrap();
+      navigate("/history/details", { state: {collationData: response.result}})
     }
     catch(error: unknown) {
       showError(error);

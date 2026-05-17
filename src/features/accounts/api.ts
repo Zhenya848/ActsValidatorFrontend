@@ -50,10 +50,10 @@ export const authApi = baseApi.injectEndpoints({
             })
         }),
 
-        updateUser: builder.mutation<Envelope<string>, { userName: string, email: string, password?: string, oldPassword?: string}>({
-            query: ({ userName, email, password, oldPassword }) => ({
+        updateUser: builder.mutation<Envelope<User>, { userName: string, email: string, password?: string, newPassword?: string}>({
+            query: ({ userName, email, password, newPassword }) => ({
                 url: USER_SERVICE_API_URL + "update-user",
-                body: { userName, email, password, oldPassword },
+                body: { userName, email, password, newPassword },
                 method: "PUT"
             })
         }),
