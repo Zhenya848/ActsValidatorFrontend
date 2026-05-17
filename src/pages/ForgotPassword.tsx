@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ForgotPasswordLabel } from "../widgets/components/auth/password/ForgotPasswordLabel";
+import { ForgotPasswordLayout } from "../widgets/components/auth/password/ForgotPasswordLayout";
 
 export default function ForgotPassword() {
     return (
@@ -10,7 +10,7 @@ export default function ForgotPassword() {
                 transition={{ duration: 0.5 }}
                 className="w-full max-w-md"
             >
-                <ForgotPasswordLabel />
+                <ForgotPasswordLayout />
             </motion.div>
         </div>
     )

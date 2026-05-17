@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import HistoryLabel from '../widgets/components/history/HistoryLabel';
+import HistoryLayout from '../widgets/components/history/HistoryLayout';
 
 export default function History() {
   return (
@@ -10,7 +10,7 @@ export default function History() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <HistoryLabel />
+          <HistoryLayout />
         </motion.div>
       </div>
     </div>

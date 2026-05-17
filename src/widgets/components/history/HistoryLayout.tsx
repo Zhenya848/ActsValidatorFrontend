@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-dom";
 import { GetCookies } from "../../../features/accounts/GetCookies";
 import { formatDate } from "../../../shared/helpers/formatDate";
 
-export default function HistoryLabel() {
+export default function HistoryLayout() {
     const refreshToken = GetCookies("refreshToken");
     const navigate = useNavigate();
 
@@ -43,15 +43,16 @@ export default function HistoryLabel() {
     type StatusConfig = {
       label: string;
       icon: LucideIcon;
-      classes: string;
+      iconClasses: string;
+      textClasses: string;
     };
 
     type Status = 'success' | 'warning' | 'error';
 
     const statusConfig: Record<Status, StatusConfig> = {
-      success: { label: 'Ок', icon: CheckCircle2, classes: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
-      warning: { label: 'Есть расхождения', icon: AlertTriangle, classes: 'bg-amber-50 text-amber-700 border-amber-200' },
-      error: { label: 'Критично', icon: AlertTriangle, classes: 'bg-red-50 text-red-700 border-red-200' },
+      success: { label: 'Ок', icon: CheckCircle2, iconClasses: 'bg-emerald-50 text-emerald-700 border-emerald-200', textClasses: 'text-emerald-600' },
+      warning: { label: 'Есть расхождения', icon: AlertTriangle, iconClasses: 'bg-amber-50 text-amber-700 border-amber-200', textClasses: 'text-amber-600' },
+      error: { label: 'Критично', icon: AlertTriangle, iconClasses: 'bg-red-50 text-red-700 border-red-200', textClasses: 'text-red-600' },
     };
 
     type StatItem = {
@@ -64,8 +65,8 @@ export default function HistoryLabel() {
 
     const stats: StatItem[] = [
       { label: 'Всего загрузок', value: totalCount, change: '', icon: FileSpreadsheet, color: 'bg-indigo-50 text-indigo-600' },
-      { label: 'Успешных сверок', value: successfulCount, change: `${Math.floor(successfulCount / totalCount * 100)}% от общего`, icon: FileCheck, color: 'bg-emerald-50 text-emerald-600' },
-      { label: 'С расхождениями', value: failCount, change: `${Math.floor(failCount / totalCount * 100)}% от общего`, icon: AlertTriangle, color: 'bg-amber-50 text-amber-600' },
+      { label: 'Успешных сверок', value: successfulCount, change: `${Math.floor(successfulCount / (totalCount === 0 ? 1 : totalCount) * 100)}% от общего`, icon: FileCheck, color: 'bg-emerald-50 text-emerald-600' },
+      { label: 'С расхождениями', value: failCount, change: `${Math.floor(failCount / (totalCount === 0 ? 1 : totalCount) * 100)}% от общего`, icon: AlertTriangle, color: 'bg-amber-50 text-amber-600' },
       { label: 'Средняя точность', value: `${averrageAccuracy}%`, change: '', icon: TrendingUp, color: 'bg-violet-50 text-violet-600' },
     ];
 
@@ -142,7 +143,7 @@ export default function HistoryLabel() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {collationsData?.result?.items?.map((row, i) => {
+                    {collationPageList?.items?.map((row, i) => {
                       const st = statusConfig[row.status.toLowerCase() as Status] ?? statusConfig["success"];
                       const StatusIcon = st.icon;
                       return (
@@ -160,12 +161,12 @@ export default function HistoryLabel() {
                           
                           <TableCell className="py-4 text-center"><span className="text-sm text-slate-600 font-medium">{row.rowsProcessed}</span></TableCell>
                           <TableCell className="py-4 text-center">
-                            <span className={`text-sm font-bold ${row.collationErrors.length === 0 ? 'text-emerald-600' : row.collationErrors.length <= 3 ? 'text-amber-600' : 'text-red-600'}`}>
+                            <span className={`text-sm font-bold ${st.textClasses}`}>
                               {row.collationErrors.length}
                             </span>
                           </TableCell>
                           <TableCell className="py-4">
-                            <Badge variant="outline" className={`${st.classes} border font-medium text-xs gap-1`}>
+                            <Badge variant="outline" className={`${st.iconClasses} border font-medium text-xs gap-1`}>
                               <StatusIcon className="w-3 h-3" />
                               {st.label}
                             </Badge>
@@ -180,8 +181,8 @@ export default function HistoryLabel() {
                             <Button 
                               variant="ghost" 
                               size="sm" 
-                              className="opacity-0 group-hover:opacity-100 transition-opacity rounded-lg text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50"
-                              onClick={() => navigate("details", { state: { collationData: collationsData.result?.items[i] } })}>
+                              className="rounded-lg text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 details-button-visibility"
+                              onClick={() => navigate("details", { state: { collationData: collationPageList?.items[i] } })}>
                               <Eye className="w-4 h-4 mr-1" />
                                 Детали
                               <ChevronRight className="w-3 h-3 ml-1" />

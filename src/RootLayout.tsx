@@ -1,14 +1,17 @@
 import { useState } from 'react';
-import { Link, Outlet } from 'react-router-dom';
+import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { createPageUrl } from "./shared/utils"
 import { motion, AnimatePresence } from 'framer-motion';
-import { FileSpreadsheet, Upload, Clock, Zap, Home, Menu, X, LogIn, Loader2 } from 'lucide-react';
+import { FileSpreadsheet, Upload, Clock, Zap, Home, Menu, X, LogIn, Loader2, CreditCard, LogOut, Settings, User } from 'lucide-react';
 import { Button } from './shared/ui/button';
 import { Bounce, ToastContainer } from "react-toastify";
 import { useSelector } from 'react-redux';
-import { selectUser } from './app/auth.slice';
+import { logout, selectUser } from './app/auth.slice';
 import { UserDropdown } from './widgets/components/layout/UserDropdown';
-import { useInitAuth } from './features/accounts/hooks/useInitAuth';
+import { useInitUser } from './features/accounts/hooks/useInitUser';
+import { useLogoutMutation } from './features/accounts/api';
+import { useAppDispatch } from './app/store';
+import { showError } from './shared/helpers/showError';
 
 const navItems = [
   { name: 'Главная', page: '', icon: Home },
@@ -25,7 +28,23 @@ export default function RootLayout({ currentPageName = "" }: IRootLayoutParamete
   const [mobileOpen, setMobileOpen] = useState(false);
   const isLanding = currentPageName === 'home';
   const user = useSelector(selectUser);
-  const { isLoading } = useInitAuth();
+  const { isLoading: isUserLoading } = useInitUser();
+  const [logoutUser, { isLoading: isLogoutLoading }] = useLogoutMutation();
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+
+  const handleLogout = async () => {
+    try {
+      await logoutUser();
+      dispatch(logout());
+      
+      setMobileOpen(false);
+      navigate("/login");
+    }
+    catch(error: unknown) {
+      showError(error);
+    }
+  }
 
   return (
     <div className="min-h-screen bg-white">
@@ -38,7 +57,7 @@ export default function RootLayout({ currentPageName = "" }: IRootLayoutParamete
               <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-200">
                 <FileSpreadsheet className="w-4.5 h-4.5 text-white" />
               </div>
-              <span className="text-lg font-bold text-slate-900 tracking-tight">СверкаПро</span>
+              <span className="text-lg font-bold text-slate-900 tracking-tight">Экспресс – Сверка</span>
             </Link>
 
             <div className="hidden md:flex items-center gap-1">
@@ -59,7 +78,7 @@ export default function RootLayout({ currentPageName = "" }: IRootLayoutParamete
 
             <div className="hidden md:flex items-center gap-3">
               {
-                isLoading
+                isUserLoading
                 ? 
                 (
                   <div className="flex items-center gap-2 px-3 py-1.5 text-slate-400">
@@ -124,14 +143,51 @@ export default function RootLayout({ currentPageName = "" }: IRootLayoutParamete
                     </Link>
                   );
                 })}
-                <div className="pt-3 mt-3 border-t border-slate-100 space-y-2">
-                  <Button variant="outline" className="w-full rounded-xl justify-center">
-                    <LogIn className="w-4 h-4 mr-2" />
-                    Войти
-                  </Button>
-                  <Button className="w-full bg-indigo-600 hover:bg-indigo-700 rounded-xl justify-center">
-                    Регистрация
-                  </Button>
+
+                <div className="pt-3 mt-3 border-t border-slate-100">
+                  {user ? (
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-indigo-50">
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center flex-shrink-0">
+                          <User className="w-4 h-4 text-white" />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-sm font-semibold text-slate-800 truncate">{user.displayName}</p>
+                          <p className="text-xs text-indigo-600 font-medium">{user.isSubscribed ? 'Подписка активна' : `${user.balance} сверок`}</p>
+                        </div>
+                      </div>
+                      <Link to={createPageUrl('settings')} onClick={() => setMobileOpen(false)}>
+                        <div className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-slate-600 hover:bg-slate-50 transition-colors">
+                          <Settings className="w-4 h-4 text-slate-400" />
+                          Настройки
+                        </div>
+                      </Link>
+                      <Link to={createPageUrl('pricing')} onClick={() => setMobileOpen(false)}>
+                        <div className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-slate-600 hover:bg-slate-50 transition-colors">
+                          <CreditCard className="w-4 h-4 text-slate-400" />
+                          Купить кредиты
+                        </div>
+                      </Link>
+                      <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-rose-500 hover:bg-rose-50 transition-colors" onClick={handleLogout} disabled={isLogoutLoading}>
+                        <LogOut className="w-4 h-4" />
+                        Выйти
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      <Link className="block" to={createPageUrl("login")} onClick={() => setMobileOpen(false)}>
+                        <Button variant="outline" className="w-full rounded-xl justify-center">
+                          <LogIn className="w-4 h-4 mr-2" />
+                          Войти
+                        </Button>
+                      </Link>
+                      <Link className="block" to={createPageUrl("register")} onClick={() => setMobileOpen(false)}>
+                        <Button className="w-full bg-indigo-600 hover:bg-indigo-700 rounded-xl justify-center">
+                          Регистрация
+                        </Button>
+                      </Link>
+                    </div>
+                  )}
                 </div>
               </div>
             </motion.div>
@@ -140,7 +196,7 @@ export default function RootLayout({ currentPageName = "" }: IRootLayoutParamete
       </nav>
 
       <main>
-        {isLoading 
+        {isUserLoading 
         ? 
         (
           <div className="flex flex-col items-center justify-center min-h-[60vh]">
@@ -174,9 +230,9 @@ export default function RootLayout({ currentPageName = "" }: IRootLayoutParamete
               <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
                 <FileSpreadsheet className="w-3.5 h-3.5 text-white" />
               </div>
-              <span className="text-sm font-semibold text-slate-600">СверкаПро</span>
+              <span className="text-sm font-semibold text-slate-600">Экспресс – Сверка</span>
             </div>
-            <p className="text-xs text-slate-400">© 2026 СверкаПро. Все права защищены.</p>
+            <p className="text-xs text-slate-400">© 2026 Экспресс – Сверка. Все права защищены.</p>
           </div>
         </div>
       </footer>

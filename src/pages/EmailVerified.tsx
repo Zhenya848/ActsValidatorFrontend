@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { EmailVerifiedLabel } from '../widgets/components/emailVerification/EmailVerifiedLabel';
+import { EmailVerifiedLayout } from '../widgets/components/emailVerification/EmailVerifiedLayout';
 
 export default function EmailVerified() {
   return (
@@ -10,7 +10,7 @@ export default function EmailVerified() {
         transition={{ duration: 0.5 }}
         className="max-w-md w-full"
       >
-        <EmailVerifiedLabel />
+        <EmailVerifiedLayout />
       </motion.div>
     </div>
   );

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { selectUser } from "../../../app/auth.slice";
+import { selectUser, setCredentials } from "../../../app/auth.slice";
 import { useSendVerificationCodeMutation, useUpdateUserMutation } from "../../../features/accounts/api";
 import { showError } from "../../../shared/helpers/showError";
 import { User, Mail, Lock, Eye, EyeOff, CheckCircle2, ShieldCheck } from 'lucide-react';
@@ -9,8 +9,9 @@ import { Section } from "./Section";
 import { SaveButton } from "./SaveButton";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useAppDispatch } from "../../../app/store";
 
-export function SettingsLabel() {
+export function SettingsLayout() {
     const requirements = [
         { label: 'Не менее 8 символов', check: (p: string) => p.length >= 8 },
         { label: 'Заглавная буква', check: (p: string) => /[A-ZА-Я]/.test(p) },
@@ -24,12 +25,17 @@ export function SettingsLabel() {
     const [email, setEmail] = useState(user?.email ?? '');
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
-    const [showCurrent, setShowCurrent] = useState(false);
-    const [showNew, setShowNew] = useState(false);
+    const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+    const [showNewPassword, setShowNewPassword] = useState(false);
     const isPasswordValid = newPassword.length === 0 || requirements.every(req => req.check(newPassword));
+    const isNameValid = name.trim() !== '';
+    const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    const isFormValid = isPasswordValid && isNameValid && isEmailValid;
 
     const [updateUser, { isLoading: isUpdateUserLoading, isSuccess: isUpdateUserSuccess }] = useUpdateUserMutation();
     const [sendVerificationCode, { isLoading: isSendVerificationCodeLoading, isSuccess: isSendVerificationCodeSuccess }] = useSendVerificationCodeMutation();
+
+    const dispatch = useAppDispatch();
 
     const send = async () => {
         try {
@@ -42,7 +48,8 @@ export function SettingsLabel() {
 
     const save = async () => {
         try {
-            await updateUser({ userName: name, email: email, password: currentPassword, oldPassword: newPassword }).unwrap();
+            const userData = await updateUser({ userName: name, email: email, password: currentPassword, newPassword: newPassword }).unwrap();
+            dispatch(setCredentials({ user: userData.result! }));
         }
         catch (error: unknown) {
             showError(error);
@@ -114,7 +121,7 @@ export function SettingsLabel() {
                         <label className="block text-sm font-medium text-slate-700 mb-1.5">Текущий пароль</label>
                         <div className="relative">
                             <Input
-                            type={showCurrent ? 'text' : 'password'}
+                            type={showCurrentPassword ? 'text' : 'password'}
                             value={currentPassword}
                             onChange={(e) => setCurrentPassword(e.target.value)}
                             className="pr-10 h-11 rounded-xl border-slate-200"
@@ -122,10 +129,10 @@ export function SettingsLabel() {
                             />
                             <button
                             type="button"
-                            onClick={() => setShowCurrent(!showCurrent)}
+                            onClick={() => setShowCurrentPassword(!showCurrentPassword)}
                             className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
                             >
-                            {showCurrent ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                            {showCurrentPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                             </button>
                         </div>
                     </div>
@@ -133,7 +140,7 @@ export function SettingsLabel() {
                         <label className="block text-sm font-medium text-slate-700 mb-1.5">Новый пароль</label>
                         <div className="relative">
                             <Input
-                            type={showNew ? 'text' : 'password'}
+                            type={showNewPassword ? 'text' : 'password'}
                             value={newPassword}
                             onChange={(e) => setNewPassword(e.target.value)}
                             className="pr-10 h-11 rounded-xl border-slate-200"
@@ -141,10 +148,10 @@ export function SettingsLabel() {
                             />
                             <button
                             type="button"
-                            onClick={() => setShowNew(!showNew)}
+                            onClick={() => setShowNewPassword(!showNewPassword)}
                             className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
                             >
-                                {showNew ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                {showNewPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                             </button>
                         </div>
                     </div>
@@ -165,7 +172,7 @@ export function SettingsLabel() {
                 </div>
             </Section>
 
-            <SaveButton saved={isUpdateUserSuccess} onClick={save} disabled={isUpdateUserLoading || isPasswordValid == false} />
+            <SaveButton saved={isUpdateUserSuccess} onClick={save} disabled={isUpdateUserLoading || !isFormValid} />
 
             {/*<Section icon={Bell} title="Уведомления" iconColor="bg-rose-100 text-rose-600">
                 <div className="space-y-3">

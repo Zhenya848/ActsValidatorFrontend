@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ResetPasswordLabel } from "../widgets/components/auth/password/ResetPasswordLabel";
+import { ResetPasswordLayout } from "../widgets/components/auth/password/ResetPasswordLayout";
 
 export default function ResetPassword() {
     return (
@@ -10,7 +10,7 @@ export default function ResetPassword() {
                 transition={{ duration: 0.5 }}
                 className="w-full max-w-md"
             >
-                <ResetPasswordLabel />
+                <ResetPasswordLayout />
             </motion.div>
         </div>
     )

@@ -4,9 +4,8 @@ import { showError } from "../../../../shared/helpers/showError";
 import { ArrowRight, CheckCircle2, Mail } from "lucide-react";
 import { Input } from "../../../../shared/ui/input";
 import { Button } from "../../../../shared/ui/button";
-import { SaveButton } from "../../settings/SaveButton";
 
-export function ForgotPasswordLabel() {
+export function ForgotPasswordLayout() {
     const [email, setEmail] = useState('');
     const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 

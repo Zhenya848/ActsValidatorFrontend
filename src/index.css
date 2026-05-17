@@ -113,3 +113,20 @@
     @apply bg-background text-foreground;
   }
 }
+
+@media (hover: hover) and (pointer: fine) {
+  .details-button-visibility {
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+  }
+
+  .group:hover .details-button-visibility {
+    opacity: 1;
+  }
+}
+
+@media (hover: none) or (pointer: coarse) {
+  .details-button-visibility {
+    opacity: 1;
+  }
+}

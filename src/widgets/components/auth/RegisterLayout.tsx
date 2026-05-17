@@ -10,7 +10,7 @@ import { Input } from "../../../shared/ui/input";
 import { motion } from "framer-motion";
 import { Button } from "../../../shared/ui/button";
 
-export function RegisterLabel() {
+export function RegisterLayout() {
     const requirements = [
         { label: 'Не менее 8 символов', check: (p: string) => p.length >= 8 },
         { label: 'Заглавная буква', check: (p: string) => /[A-ZА-Я]/.test(p) },
