@@ -225,14 +225,39 @@ export default function RootLayout({ currentPageName = "" }: IRootLayoutParamete
 
       <footer className="border-t border-slate-100 bg-slate-50">
         <div className="max-w-7xl mx-auto px-6 py-10">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
-                <FileSpreadsheet className="w-3.5 h-3.5 text-white" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-16">
+            {/* Левая часть */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-2.5">
+                <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
+                  <FileSpreadsheet className="w-3.5 h-3.5 text-white" />
+                </div>
+                <span className="text-sm font-bold text-slate-700">Экспресс – Сверка</span>
               </div>
-              <span className="text-sm font-semibold text-slate-600">Экспресс – Сверка</span>
+
+              <div className='display: flex gap-4'>
+                <p className="text-xs text-slate-500">Самозанятый Белов Е. А.</p>
+                <p className="text-xs text-slate-500">ИНН 773773576827</p>
+              </div>
             </div>
-            <p className="text-xs text-slate-400">© 2026 Экспресс – Сверка. Все права защищены.</p>
+
+            <div className="space-y-2.5">
+              <p className="text-xs text-slate-500">Контакты разработчика: </p>
+
+              <div className='display: flex gap-4'>
+                <a href="https://mail.google.com/mail/?view=cm&fs=1&to=belovea100207@gmail.com" className="block text-xs text-slate-500 hover:text-slate-800 transition-colors">
+                  Почта
+                </a>
+                <a href="https://t.me/zhenya848" className="block text-xs text-slate-500 hover:text-slate-800 transition-colors">
+                  Telegram
+                </a>
+              </div>
+            </div>
+
+            <div className="space-y-2 md:text-right">
+              <p className="text-xs text-slate-400">© 2026 Экспресс – Сверка.</p>
+              <p className="text-xs text-slate-400">Все права защищены.</p>
+            </div>
           </div>
         </div>
       </footer>

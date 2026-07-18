@@ -1,4 +1,4 @@
-import { Check, Zap, Star, Crown, Sparkles, CheckCircle2, MailWarning } from 'lucide-react';
+import { Check, Zap, Star, Sparkles, CheckCircle2, MailWarning } from 'lucide-react';
 import { Button } from '../../../shared/ui/button';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
@@ -13,11 +13,11 @@ import { useSendVerificationCodeMutation } from '../../../features/accounts/api'
 const plans = [
   {
     id: '5_collations',
-    name: 'Пробный',
+    name: 'Пакет - мини',
     icon: Zap,
     color: 'from-slate-500 to-slate-600',
     badge: null,
-    price: 290,
+    price: 149,
     period: null,
     credits: 5,
     unlimited: false,
@@ -32,31 +32,29 @@ const plans = [
     icon: Star,
     color: 'from-indigo-500 to-violet-600',
     badge: 'Лучший выбор',
-    price: 490,
+    price: 390,
     period: 'мес',
     credits: null,
     unlimited: true,
     features: [
       'Безлимитные сверки',
-      'История без ограничений',
-      'Экспорт PDF-отчётов',
+      'История без ограничений'
     ],
   },
   {
-    id: 'subscribe_12_month',
-    name: 'Подписка на год',
-    icon: Crown,
-    color: 'from-amber-500 to-orange-500',
-    badge: 'Выгодно',
-    price: 4900,
-    period: 'год',
+    id: 'subscribe_3_month',
+    name: 'Подписка на квартал',
+    icon: Sparkles,
+    color: 'from-emerald-500 to-teal-600',
+    badge: '3 месяца',
+    price: 1090,
+    period: 'квартал',
     credits: null,
     unlimited: true,
     features: [
       'Безлимитные сверки',
       'История без ограничений',
-      'Экспорт PDF/Excel',
-      'Экономия 980 ₽',
+      'Экономия 80 ₽'
     ],
   },
 ];

@@ -39,8 +39,8 @@ export function RegisterLayout() {
 
             const loginResponse = await login({ email: email, password: password }).unwrap();
             dispatch(setCredentials({ accessToken: loginResponse.result!.accessToken, user: loginResponse.result!.user }));
-            
-            navigate("/");
+
+            navigate("/", { state: {isBannerShowedData: true}})
         } 
         catch (e: unknown) {
             showError(e);
@@ -150,9 +150,9 @@ export function RegisterLayout() {
                     </div>
                     <span className="text-xs text-slate-500 leading-relaxed">
                     Я принимаю{' '}
-                    <a href="#" className="text-indigo-600 hover:underline">Условия использования</a>{' '}
+                    <a href="/personal" className="text-indigo-600 hover:underline">Политику обработки персональных данных</a>{' '}
                     и{' '}
-                    <a href="#" className="text-indigo-600 hover:underline">Политику конфиденциальности</a>
+                    <a href="/privacy" className="text-indigo-600 hover:underline">Политику конфиденциальности</a>
                     </span>
                 </label>
     

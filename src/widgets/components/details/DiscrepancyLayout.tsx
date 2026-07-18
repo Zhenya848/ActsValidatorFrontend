@@ -1,29 +1,16 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import type { Collation } from "../../../entities/collations/Collation";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "../../../shared/utils";
 import { Button } from "../../../shared/ui/button";
-import { ArrowLeft, CheckCircle2 } from "lucide-react";
-import DiscrepancyCard from "./DiscrepancyCard";
-
-const FIELD_FILTERS = [
-  { key: 'all', label: 'Все поля' },
-  { key: 'amount', label: 'По сумме' },
-  { key: 'date', label: 'По дате' },
-  { key: 'none', label: 'Отсутствующие' },
-  { key: 'docNumber', label: 'По номеру документа' },
-];
-
-const FIELD_MAP: Record<string, string[]> = {
-  amount: ['сумма', 'дебет', 'кредит'],
-  date: ['дата'],
-  docNumber: ['документ'],
-  none: ['отсутствует']
-};
+import { AlertTriangle, ArrowLeft, CheckCircle2, Download } from "lucide-react";
+import { motion } from "framer-motion";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../../shared/ui/tabs";
+import DocumentSummary from "./DocumentSummary";
+import DiscrepancyList from "./DiscrepancyList";
 
 export default function DiscrepanciesLayout() {
   const navigate = useNavigate();
-  const [fieldFilter, setFieldFilter] = useState('all');
 
   const location = useLocation();
   const collation: Collation = location.state?.collationData;
@@ -39,75 +26,74 @@ export default function DiscrepanciesLayout() {
   if (!collation)
     return;
 
-  const visibleItems = collation.collationErrors.filter((d) => {
-    return fieldFilter === 'all' || FIELD_MAP[fieldFilter]?.includes(d.field.toLowerCase());
-  });
-
   return (
-    <div>
-      <div className="mb-8">
-        <Link to={createPageUrl('History')}>
-          <Button variant="ghost" className="mb-4 -ml-3 text-slate-500 hover:text-slate-700 rounded-lg">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Назад к истории
-          </Button>
-        </Link>
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Детали сверки</h1>
-            <p className="mt-1 text-slate-500 text-sm">{collation.act1Name} · {collation.act2Name}</p>
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
+      <div className="max-w-5xl mx-auto px-6 py-12 lg:py-20">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <div className="mb-8">
+            <Link to={createPageUrl('History')}>
+              <Button variant="ghost" className="mb-4 -ml-3 text-slate-500 hover:text-slate-700 rounded-lg">
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Назад к истории
+              </Button>
+            </Link>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div>
+                <h1 className="text-3xl font-bold text-slate-900 tracking-tight">
+                  Детали сверки
+                </h1>
+                <p className="mt-2 text-slate-500">
+                  Результаты анализа документа и найденные расхождения
+                </p>
+              </div>
+              <Button variant="outline" className="rounded-xl border-slate-200 gap-2 w-fit">
+                <Download className="w-4 h-4" />
+                Скачать отчёт
+              </Button>
+            </div>
           </div>
-        </div>
-      </div>
 
-      <div className="grid grid-cols-3 gap-3 mb-5">
-        {[
-          { label: 'Строк проверено', value: collation.rowsProcessed, color: 'text-slate-800' },
-          { label: 'Совпадений', value: collation.coincidencesCount, color: 'text-emerald-600' },
-          { label: 'Расхождений', value: collation.collationErrors.length, color: 'text-rose-600' },
-        ].map((s) => (
-          <div key={s.label} className="bg-white border border-slate-200 rounded-xl p-4 text-center shadow-sm">
-            <p className={`text-2xl font-bold ${s.color}`}>{s.value}</p>
-            <p className="text-xs text-slate-400 mt-0.5">{s.label}</p>
+          {/* Summary */}
+          <div className="mb-8">
+            <DocumentSummary collation={collation} />
           </div>
-        ))}
-      </div>
 
-      <div className="flex flex-wrap gap-2 mb-5">
-        {FIELD_FILTERS.map((f) => {
-          const count = f.key === 'all'
-            ? collation.collationErrors.length
-            : collation.collationErrors.filter((d) =>
-                FIELD_MAP[f.key]?.includes(d.field)
-              ).length;
-          return (
-            <button
-              key={f.key}
-              onClick={() => setFieldFilter(f.key)}
-              className={`px-3 py-1.5 rounded-xl text-sm font-medium transition-all border ${
-                fieldFilter === f.key
-                  ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
-                  : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300'
-              }`}
-            >
-              {f.label} <span className="ml-1 opacity-70">{count}</span>
-            </button>
-          );
-        })}
-      </div>
+          {/* Tabs */}
+          <Tabs defaultValue="discrepancies">
+            <TabsList className="bg-slate-100 rounded-xl p-1 mb-6">
+              <TabsTrigger value="discrepancies" className="rounded-lg gap-2 data-[state=active]:bg-white data-[state=active]:shadow-sm">
+                <AlertTriangle className="w-4 h-4" />
+                Расхождения
+                <span className="ml-1 text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-semibold">{collation.collationErrors.length}</span>
+              </TabsTrigger>
+              <TabsTrigger value="matched" className="rounded-lg gap-2 data-[state=active]:bg-white data-[state=active]:shadow-sm">
+                <CheckCircle2 className="w-4 h-4" />
+                Совпадения
+                <span className="ml-1 text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-semibold">{collation.coincidencesCount}</span>
+              </TabsTrigger>
+            </TabsList>
 
-      <div className="space-y-3">
-        {visibleItems.map((item, i) => (
-          <DiscrepancyCard key={i} item={item} index={i} />
-        ))}
-      </div>
+            <TabsContent value="discrepancies">
+              <DiscrepancyList collation={collation} />
+            </TabsContent>
 
-      <div className="mt-8 bg-white border border-slate-200 rounded-2xl p-8 text-center shadow-sm">
-        <div className="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center mx-auto mb-4">
-          <CheckCircle2 className="w-6 h-6 text-emerald-500" />
-        </div>
-        <p className="font-semibold text-slate-800">{collation.coincidencesCount} строк полностью совпали</p>
-        <p className="text-sm text-slate-400 mt-1">Данные идентичны в обоих документах</p>
+            <TabsContent value="matched">
+              <div className="bg-white border border-slate-200 rounded-xl p-12 text-center">
+                <div className="w-16 h-16 rounded-2xl bg-emerald-50 flex items-center justify-center mx-auto mb-5">
+                  <CheckCircle2 className="w-8 h-8 text-emerald-500" />
+                </div>
+                <h3 className="text-lg font-semibold text-slate-800 mb-2">{collation.coincidencesCount} совпадений</h3>
+                <p className="text-slate-400 max-w-md mx-auto">
+                  Все данные в этих строках полностью идентичны между вашим актом и данными контрагента.
+                </p>
+              </div>
+            </TabsContent>
+          </Tabs>
+        </motion.div>
       </div>
     </div>
   );
