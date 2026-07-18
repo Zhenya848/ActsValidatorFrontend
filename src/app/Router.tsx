@@ -11,6 +11,8 @@ import Settings from "../pages/Settings";
 import EmailVerified from "../pages/EmailVerified";
 import ForgotPassword from "../pages/ForgotPassword";
 import ResetPassword from "../pages/ResetPassword";
+import PrivacyPolicy from "../pages/PrivacyPolicy";
+import PersonalData from "../pages/PersonalData";
 
 export const router = createBrowserRouter([
     {
@@ -61,6 +63,15 @@ export const router = createBrowserRouter([
         {
           path: "/reset-password",
           element: <ResetPassword />
+        },
+        {
+          path: "/privacy",
+          element: <PrivacyPolicy />
+        }
+        ,
+        {
+          path: "/personal",
+          element: <PersonalData />
         }
       ],
       errorElement: <div>404 Страница не найдена!</div>

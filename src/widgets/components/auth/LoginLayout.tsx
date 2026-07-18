@@ -105,9 +105,9 @@ export function LoginLayout() {
                         </div>
                         <span className="text-xs text-slate-500 leading-relaxed">
                             Я принимаю{' '}
-                            <a href="#" className="text-indigo-600 hover:underline">Условия использования</a>{' '}
+                            <a href="/personal" className="text-indigo-600 hover:underline">Политику обработки персональных данных</a>{' '}
                             и{' '}
-                            <a href="#" className="text-indigo-600 hover:underline">Политику конфиденциальности</a>
+                            <a href="/privacy" className="text-indigo-600 hover:underline">Политику конфиденциальности</a>
                         </span>
                     </label>
 
