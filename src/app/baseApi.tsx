@@ -5,7 +5,7 @@ import type { LoginResponse } from "../features/accounts/responses/LoginResponse
 import { setCredentials } from "./auth.slice";
 
 export const ACTS_SERVICE_API_URL = "/api/Acts/"
-export const USER_SERVICE_API_URL = "/api/Auth/";
+export const USER_SERVICE_API_URL = "http://localhost:5172/api/Auth/";
 export const PAYMENT_SERVICE_API_URL = "/api/Payments/";
 
 const baseQuery = fetchBaseQuery({
