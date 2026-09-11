@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import { selectUser, setCredentials } from "../../../app/auth.slice";
 import { useSendVerificationCodeMutation, useUpdateUserMutation } from "../../../features/accounts/api";
 import { showError } from "../../../shared/helpers/showError";
@@ -9,7 +8,7 @@ import { Section } from "./Section";
 import { SaveButton } from "./SaveButton";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { useAppDispatch } from "../../../app/store";
+import { useAppDispatch, useAppSelector } from "../../../app/store";
 
 export function SettingsLayout() {
     const requirements = [
@@ -18,7 +17,7 @@ export function SettingsLayout() {
         { label: 'Цифра', check: (p: string) => /\d/.test(p) },
     ];
 
-    const user = useSelector(selectUser);
+    const user = useAppSelector(selectUser);
     const navigate = useNavigate();
     
     const [name, setName] = useState(user?.displayName ?? '');

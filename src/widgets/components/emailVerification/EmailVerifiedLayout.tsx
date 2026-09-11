@@ -6,14 +6,13 @@ import { useVerifyEmailMutation } from "../../../features/accounts/api";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect } from "react";
 import { showError } from "../../../shared/helpers/showError";
-import { useSelector } from "react-redux";
 import { selectUser, setCredentials } from "../../../app/auth.slice";
-import { useAppDispatch } from "../../../app/store";
+import { useAppDispatch, useAppSelector } from "../../../app/store";
 
 export function EmailVerifiedLayout() {
     const [verifyEmail, { isLoading, isSuccess, isError }] = useVerifyEmailMutation();
     const [searchParams] = useSearchParams();
-    const user = useSelector(selectUser);
+    const user = useAppSelector(selectUser);
     const dispatch = useAppDispatch();
     
     const userId = searchParams.get('userId');

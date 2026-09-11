@@ -1,7 +1,7 @@
 import { baseApi, PAYMENT_SERVICE_API_URL } from "../../app/baseApi";
 import type { Envelope } from "../../shared/api/Envelope";
 
-export const testsApi = baseApi.injectEndpoints({
+export const paymentsApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
         createPayment: builder.mutation<Envelope<string>, { productId: string }>({
             query: ({ productId }) => ({
@@ -15,4 +15,4 @@ export const testsApi = baseApi.injectEndpoints({
 
 export const { 
     useCreatePaymentMutation
-} = testsApi;
+} = paymentsApi;

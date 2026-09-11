@@ -1,11 +1,13 @@
 import type { User } from "../entities/accounts/User";
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
+type AuthStatus = "idle" | "loading" | "succeeded" | "failed";
+
 export type AuthState = {
     accessToken: string | undefined;
     user: User | undefined;
     isAuthenticated: boolean;
-    authStatus: "idle" | "loading" | "succeeded" | "failed";
+    authStatus: AuthStatus;
 }
 
 const initialAuthState: AuthState = {
@@ -45,6 +47,10 @@ export const authSlice = createSlice({
             }
         },
 
+        setAuthLoading: (state) => {
+            state.authStatus = "loading";
+        },
+
         logout: (state) => {
             state.accessToken = undefined;
             state.isAuthenticated = false;
@@ -54,7 +60,7 @@ export const authSlice = createSlice({
     }
 })
 
-export const { setCredentials, logout } = authSlice.actions;
+export const { setCredentials, logout, setAuthLoading } = authSlice.actions;
 export const { selectAccessToken, selectAuthStatus, selectUser, selectIsAuthenticated } = authSlice.selectors;
 
 export default authSlice.reducer;

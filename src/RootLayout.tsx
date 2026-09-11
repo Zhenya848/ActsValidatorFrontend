@@ -1,17 +1,17 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { createPageUrl } from "./shared/utils"
 import { motion, AnimatePresence } from 'framer-motion';
 import { FileSpreadsheet, Upload, Clock, Zap, Home, Menu, X, LogIn, Loader2, CreditCard, LogOut, Settings, User } from 'lucide-react';
 import { Button } from './shared/ui/button';
 import { Bounce, ToastContainer } from "react-toastify";
-import { useSelector } from 'react-redux';
-import { logout, selectUser } from './app/auth.slice';
+import { logout, selectAuthStatus, selectUser } from './app/auth.slice';
 import { UserDropdown } from './widgets/components/layout/UserDropdown';
-import { useInitUser } from './features/accounts/hooks/useInitUser';
 import { useLogoutMutation } from './features/accounts/api';
-import { useAppDispatch } from './app/store';
+import { useAppDispatch, useAppSelector } from './app/store';
 import { showError } from './shared/helpers/showError';
+import SupportChat from './widgets/components/SupportChat';
+import { restoreSession } from './features/accounts/authThunks';
 
 const navItems = [
   { name: 'Главная', page: '', icon: Home },
@@ -27,11 +27,15 @@ interface IRootLayoutParameters {
 export default function RootLayout({ currentPageName = "" }: IRootLayoutParameters) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const isLanding = currentPageName === 'home';
-  const user = useSelector(selectUser);
-  const { isLoading: isUserLoading } = useInitUser();
+  const user = useAppSelector(selectUser);
+  const authStatus = useAppSelector(selectAuthStatus);
   const [logoutUser, { isLoading: isLogoutLoading }] = useLogoutMutation();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+
+  useEffect(() => {
+      dispatch(restoreSession());
+  }, [dispatch]);
 
   const handleLogout = async () => {
     try {
@@ -78,7 +82,7 @@ export default function RootLayout({ currentPageName = "" }: IRootLayoutParamete
 
             <div className="hidden md:flex items-center gap-3">
               {
-                isUserLoading
+                authStatus == "loading"
                 ? 
                 (
                   <div className="flex items-center gap-2 px-3 py-1.5 text-slate-400">
@@ -87,7 +91,7 @@ export default function RootLayout({ currentPageName = "" }: IRootLayoutParamete
                   </div>
                 )
                 :
-                user
+                authStatus == "succeeded" && user
                 ? 
                 (
                   <UserDropdown user={user} />
@@ -196,7 +200,7 @@ export default function RootLayout({ currentPageName = "" }: IRootLayoutParamete
       </nav>
 
       <main>
-        {isUserLoading 
+        {authStatus == "loading"
         ? 
         (
           <div className="flex flex-col items-center justify-center min-h-[60vh]">
@@ -261,6 +265,8 @@ export default function RootLayout({ currentPageName = "" }: IRootLayoutParamete
           </div>
         </div>
       </footer>
+
+      <SupportChat />
     </div>
   );
 }

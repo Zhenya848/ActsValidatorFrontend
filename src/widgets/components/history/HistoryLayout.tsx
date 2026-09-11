@@ -8,19 +8,20 @@ import { Badge } from "../../../shared/ui/badge";
 import { Button } from "../../../shared/ui/button";
 import { useGetQuery } from "../../../features/collations/api";
 import { useNavigate } from "react-router-dom";
-import { GetCookies } from "../../../features/accounts/GetCookies";
 import { formatDate } from "../../../shared/helpers/formatDate";
+import { useAppSelector } from "../../../app/store";
+import { selectAuthStatus } from "../../../app/auth.slice";
 
 export default function HistoryLayout() {
-    const refreshToken = GetCookies("refreshToken");
+    const isUserAuthorized = useAppSelector(selectAuthStatus) == "succeeded";
     const navigate = useNavigate();
 
     useEffect(() => {
-      if (!refreshToken) {
+      if (!isUserAuthorized) {
         navigate("/login");
         return;
       }
-    }, [refreshToken])
+    }, [isUserAuthorized, navigate])
 
     const PAGE_SIZE = 10;
 
@@ -29,7 +30,7 @@ export default function HistoryLayout() {
     const [currentPage, setCurrentPage] = useState(1);
 
     const { data: collationsData } = useGetQuery({ page: currentPage, pageSize: PAGE_SIZE, actName: searchQuery, statusFilter: statusFilter }, {
-        skip: !refreshToken
+        skip: !isUserAuthorized
     });
 
     const collationPageList = collationsData?.result;

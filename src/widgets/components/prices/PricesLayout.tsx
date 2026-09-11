@@ -4,11 +4,10 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useCreatePaymentMutation } from '../../../features/payments/api';
 import { showError } from '../../../shared/helpers/showError';
-import { GetCookies } from '../../../features/accounts/GetCookies';
 import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { selectUser } from '../../../app/auth.slice';
+import { selectAuthStatus, selectUser } from '../../../app/auth.slice';
 import { useSendVerificationCodeMutation } from '../../../features/accounts/api';
+import { useAppSelector } from '../../../app/store';
 
 const plans = [
   {
@@ -62,9 +61,9 @@ const plans = [
 export function PricesLayout() {
     const [selected, setSelected] = useState("");
     const [createPayment, { isLoading }] = useCreatePaymentMutation();
-    const refreshToken = GetCookies("refreshToken");
+    const isUserAuthorized = useAppSelector(selectAuthStatus) == "succeeded";
     const navigate = useNavigate();
-    const user = useSelector(selectUser);
+    const user = useAppSelector(selectUser);
     const [sendVerificationCode, { isLoading: isSendVerificationCodeLoading, isSuccess: isSendVerificationCodeSuccess }] = useSendVerificationCodeMutation();
 
     const send = async () => {
@@ -78,7 +77,7 @@ export function PricesLayout() {
 
     const handleCreatePayment = async (productId: string) => {
         try {
-          if (!refreshToken) {
+          if (!isUserAuthorized) {
             navigate("/login");
             return;
           }
