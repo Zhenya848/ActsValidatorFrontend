@@ -4,11 +4,13 @@ import { useSelector } from 'react-redux'
 import { useDispatch } from 'react-redux'
 import { baseApi } from './baseApi'
 import authReducer from "./auth.slice"
+import signalRReducer from "./signalr.slice";
 
 export const store = configureStore({
   reducer: {
     [baseApi.reducerPath]: baseApi.reducer,
-    auth: authReducer
+    auth: authReducer,
+    signalR: signalRReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(baseApi.middleware)

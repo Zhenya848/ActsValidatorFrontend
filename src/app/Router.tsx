@@ -13,6 +13,7 @@ import ForgotPassword from "../pages/ForgotPassword";
 import ResetPassword from "../pages/ResetPassword";
 import PrivacyPolicy from "../pages/PrivacyPolicy";
 import PersonalData from "../pages/PersonalData";
+import SupportingPage from "../pages/SupportingPage";
 
 export const router = createBrowserRouter([
     {
@@ -67,11 +68,14 @@ export const router = createBrowserRouter([
         {
           path: "/privacy",
           element: <PrivacyPolicy />
-        }
-        ,
+        },
         {
           path: "/personal",
           element: <PersonalData />
+        },
+        {
+          path: "/supporting",
+          element: <SupportingPage />
         }
       ],
       errorElement: <div>404 Страница не найдена!</div>

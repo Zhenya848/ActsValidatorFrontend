@@ -6,7 +6,8 @@ import { Progress } from '../../../shared/ui/progress';
 import { useCreateMutation } from '../../../features/collations/api';
 import { useNavigate } from 'react-router-dom';
 import { showError } from '../../../shared/helpers/showError';
-import { GetCookies } from '../../../features/accounts/GetCookies';
+import { useAppSelector } from '../../../app/store';
+import { selectAuthStatus } from '../../../app/auth.slice';
 
 interface FileObject {
   id: string;
@@ -22,15 +23,15 @@ export default function UploadZone({ emailVerified = true }) {
   const [files, setFiles] = useState<FileObject[]>([]);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const navigate = useNavigate();
-  const refreshToken = GetCookies("refreshToken");
+  const isUserAuthorized = useAppSelector(selectAuthStatus) == "succeeded";
   const [create, {isLoading}] = useCreateMutation();
 
   useEffect(() => {
-    if (!refreshToken) {
+    if (!isUserAuthorized) {
       navigate("/login");
       return;
     }
-  }, [refreshToken])
+  }, [isUserAuthorized, navigate])
 
   const handle = async () => {
     try {
@@ -135,7 +136,7 @@ export default function UploadZone({ emailVerified = true }) {
                 </div>
 
                 <button onClick={(e) => { e.stopPropagation(); removeFile(file.id); }}
-                  className="flex-shrink-0 w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center transition-colors">
+                  className="shrink-0 w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center transition-colors">
                   <X className="w-4 h-4 text-slate-400" />
                 </button>
               </motion.div>

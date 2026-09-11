@@ -1,13 +1,13 @@
-import { useSelector } from "react-redux";
 import { selectUser } from "../../../app/auth.slice";
 import { useSendVerificationCodeMutation } from "../../../features/accounts/api";
 import { showError } from "../../../shared/helpers/showError";
 import { motion } from "framer-motion";
 import { CheckCircle2, FileSpreadsheet, Info, MailWarning } from "lucide-react";
 import UploadZone from "./UploadZone";
+import { useAppSelector } from "../../../app/store";
 
 export function UploadLabel() {
-    const user = useSelector(selectUser);
+    const user = useAppSelector(selectUser);
     const [sendVerificationCode, { isLoading: isSendVerificationCodeLoading, isSuccess: isSendVerificationCodeSuccess }] = useSendVerificationCodeMutation();
 
     const send = async () => {
