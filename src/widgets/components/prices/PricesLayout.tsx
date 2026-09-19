@@ -9,6 +9,12 @@ import { selectAuthStatus, selectUser } from '../../../app/auth.slice';
 import { useSendVerificationCodeMutation } from '../../../features/accounts/api';
 import { useAppSelector } from '../../../app/store';
 
+const creditPacks = [
+  { id: '2_collations', credits: 2, price: 109 },
+  { id: '5_collations', credits: 5, price: 195 },
+  { id: '10_collations', credits: 10, price: 289 },
+];
+
 const plans = [
   {
     id: '5_collations',
@@ -16,7 +22,7 @@ const plans = [
     icon: Zap,
     color: 'from-slate-500 to-slate-600',
     badge: null,
-    price: 149,
+    price: 195,
     period: null,
     credits: 5,
     unlimited: false,
@@ -63,6 +69,7 @@ export function PricesLayout() {
     const [createPayment, { isLoading }] = useCreatePaymentMutation();
     const isUserAuthorized = useAppSelector(selectAuthStatus) == "succeeded";
     const navigate = useNavigate();
+    const [selectedCredit, setSelectedCredit] = useState('credits-5');
     const user = useAppSelector(selectUser);
     const [sendVerificationCode, { isLoading: isSendVerificationCodeLoading, isSuccess: isSendVerificationCodeSuccess }] = useSendVerificationCodeMutation();
 
@@ -128,6 +135,62 @@ export function PricesLayout() {
               </div>
             </motion.div>
           )}
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="mb-10 rounded-2xl border border-slate-200 bg-white p-6"
+          >
+            <div className="flex items-center gap-2 mb-1">
+              <Zap className="w-4 h-4 text-indigo-600" />
+              <h2 className="text-lg font-bold text-slate-900">Сверки</h2>
+            </div>
+            <p className="text-sm text-slate-500 mb-4">Свайпните, чтобы выбрать количество — оплата разовая, без подписки.</p>
+
+            <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2 -mx-1 px-1">
+              {creditPacks.map((pack) => {
+                const active = selectedCredit === pack.id;
+                return (
+                  <button
+                    key={pack.id}
+                    onClick={() => setSelectedCredit(pack.id)}
+                    className={`snap-center flex-shrink-0 w-36 rounded-2xl border-2 p-4 text-left outline-none focus:outline-none transition-all ${
+                      active
+                        ? 'border-indigo-500 bg-indigo-50'
+                        : 'border-slate-200 bg-white hover:border-slate-300'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2 mb-1">
+                      <Zap className={`w-4 h-4 ${active ? 'text-indigo-600' : 'text-slate-400'}`} />
+                      <span className="text-base font-bold text-slate-900">{pack.credits}</span>
+                      <span className="text-sm text-slate-500">сверок</span>
+                    </div>
+                    <p className="text-xs text-slate-400">≈ {Math.round(pack.price / pack.credits)} ₽ / сверка</p>
+                  </button>
+                );
+              })}
+            </div>
+
+            {(() => {
+              const pack = creditPacks.find((p) => p.id === selectedCredit) || creditPacks[0];
+              return (
+                <div className="mt-4 flex items-center justify-between gap-4">
+                  <div>
+                    <span className="text-2xl font-bold text-slate-900">{pack.price.toLocaleString('ru-RU')} ₽</span>
+                    <span className="text-sm text-slate-400 ml-2">за {pack.credits} сверок</span>
+                  </div>
+                  <Button
+                    disabled={isLoading || isSendVerificationCodeLoading || user?.emailVerified == false}
+                    className="bg-slate-900 hover:bg-slate-800 rounded-xl text-sm h-10 px-6 focus-visible:ring-0 focus-visible:ring-offset-0"
+                    onClick={() => handleCreatePayment(pack.id)}
+                  >
+                    Купить
+                  </Button>
+                </div>
+              );
+            })()}
+          </motion.div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
             {plans.map((plan, i) => {
