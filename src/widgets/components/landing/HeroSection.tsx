@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { ArrowRight, ShieldCheck } from 'lucide-react';
+import { ArrowRight, Gift, ShieldCheck } from 'lucide-react';
 import { Button } from '../../../shared/ui/button';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '../../../shared/utils';
@@ -29,21 +29,32 @@ export default function HeroSection() {
             </h1>
 
             <p className="mt-6 text-lg sm:text-xl text-slate-500 leading-relaxed max-w-lg">
-              Проверка по дебету, кредиту, документу и датам. Находите несостыковки мгновенно в одном удобном интерфейсе.
+              Двойная проверка ИИ и алгоритмом по дебету, кредиту и датам. Находите несостыковки мгновенно в одном удобном интерфейсе.
             </p>
 
-            <div className="mt-10 flex flex-wrap gap-4">
-              <Link to={createPageUrl('Upload')}>
-                <Button size="lg" className="bg-indigo-600 hover:bg-indigo-700 text-base px-8 py-6 rounded-xl shadow-lg shadow-indigo-200 transition-all hover:shadow-xl hover:shadow-indigo-200 hover:-translate-y-0.5">
-                  Загрузить документ
-                  <ArrowRight className="ml-2 w-5 h-5" />
-                </Button>
-              </Link>
-              <Link to={createPageUrl('History')}>
-                <Button variant="outline" size="lg" className="text-base px-8 py-6 rounded-xl border-slate-200 hover:bg-slate-50">
-                  История сверок
-                </Button>
-              </Link>
+            <div className="mt-10 rounded-2xl bg-gradient-to-br from-indigo-600 to-violet-600 p-5 shadow-lg shadow-indigo-200">
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center flex-shrink-0">
+                  <Gift className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <p className="text-base font-bold text-white">Зарегистрируйтесь и получите 3 сверки в подарок</p>
+                  <p className="text-sm text-indigo-100 mt-0.5">Без привязки карты — доступ открывается мгновенно</p>
+                </div>
+              </div>
+              <div className="mt-4 flex flex-wrap gap-3">
+                <Link to={createPageUrl('Register')}>
+                  <Button size="lg" className="bg-white text-indigo-700 hover:bg-indigo-50 text-base px-7 py-5 rounded-xl shadow-md transition-all hover:-translate-y-0.5">
+                    Зарегистрироваться бесплатно
+                    <ArrowRight className="ml-2 w-5 h-5" />
+                  </Button>
+                </Link>
+                <Link to={createPageUrl('Upload')}>
+                  <Button variant="outline" size="lg" className="text-base px-7 py-5 rounded-xl border-white/40 text-white bg-transparent hover:bg-white/10 hover:text-white">
+                    Загрузить документ
+                  </Button>
+                </Link>
+              </div>
             </div>
           </motion.div>
 

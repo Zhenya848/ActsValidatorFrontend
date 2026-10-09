@@ -6,8 +6,6 @@ import { Progress } from '../../../shared/ui/progress';
 import { useCreateMutation } from '../../../features/collations/api';
 import { useNavigate } from 'react-router-dom';
 import { showError } from '../../../shared/helpers/showError';
-import { useAppSelector } from '../../../app/store';
-import { selectAuthStatus } from '../../../app/auth.slice';
 
 interface FileObject {
   id: string;
@@ -23,15 +21,7 @@ export default function UploadZone({ emailVerified = true }) {
   const [files, setFiles] = useState<FileObject[]>([]);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const navigate = useNavigate();
-  const isUserAuthorized = useAppSelector(selectAuthStatus) == "succeeded";
   const [create, {isLoading}] = useCreateMutation();
-
-  useEffect(() => {
-    if (!isUserAuthorized) {
-      navigate("/login");
-      return;
-    }
-  }, [isUserAuthorized, navigate])
 
   const handle = async () => {
     try {

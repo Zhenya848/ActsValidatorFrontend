@@ -3,6 +3,7 @@ import FeaturesSection from '../widgets/components/landing/FeaturesSection';
 import StatsSection from '../widgets/components/landing/StatsSection';
 import { useLocation } from 'react-router-dom';
 import WelcomeBanner from '../widgets/components/WelcomeBanner';
+import RegisterCta from '../widgets/components/landing/RegisterCta';
 
 export default function Home() {
   const location = useLocation();
@@ -14,6 +15,7 @@ export default function Home() {
       <HeroSection />
       <FeaturesSection />
       <StatsSection />
+      <RegisterCta />
     </div>
   );
 }
